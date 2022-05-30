@@ -1,38 +1,179 @@
-
-body 
-    { 
-    font: 62.5%/1.5  "Lucida Grande", "Lucida Sans", Tahoma, Verdana, sans-serif; 
-    color: #22222;     
-    text-align:center; 
-} 
-
-h1 
-    { 
-    font-size: 2.2em; 
-} 
-     
-h2 
-    { 
-    font-size: 2.0em;     
-} 
-     
-h3 
-    { 
-    font-size: 1.8em; 
-} 
-     
-h4 
-    { 
-    font-size: 1.6em;     
-} 
-     
-h5 
-    { 
-    font-size: 1.4em;     
-} 
-     
-p 
-    { 
-    font-size: 1.2em;     
-}
-
+            body {
+                background-color: #e6edf0;
+            }
+            
+            .onoffswitch {
+                position: relative;
+                width: 62px;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+            }
+            
+            .onoffswitch-checkbox {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+            
+            .onoffswitch-label {
+                display: block;
+                overflow: hidden;
+                cursor: pointer;
+                border: 2px solid #999999;
+                border-radius: 20px;
+            }
+            
+            .onoffswitch-inner {
+                display: block;
+                width: 200%;
+                margin-left: -100%;
+                transition: margin 0.3s ease-in 0s;
+            }
+            
+            .onoffswitch-inner:before,
+            .onoffswitch-inner:after {
+                display: block;
+                float: left;
+                width: 50%;
+                height: 23px;
+                padding: 0;
+                line-height: 23px;
+                font-size: 10px;
+                color: white;
+                font-family: Trebuchet, Arial, sans-serif;
+                font-weight: bold;
+                box-sizing: border-box;
+            }
+            
+            .onoffswitch-inner:before {
+                content: "ON";
+                padding-left: 8px;
+                background-color: #58DB83;
+                color: #FFFFFF;
+            }
+            
+            .onoffswitch-inner:after {
+                content: "OFF";
+                padding-right: 8px;
+                background-color: #F00909;
+                color: #FFFFFF;
+                text-align: right;
+            }
+            
+            .onoffswitch-switch {
+                display: block;
+                width: 12px;
+                margin: 8px;
+                background: #FFFFFF;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 35px;
+                border: 2px solid #999999;
+                border-radius: 20px;
+                transition: all 0.3s ease-in 0s;
+            }
+            
+            .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+                margin-left: 0;
+            }
+            
+            .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+                right: 0px;
+            }
+            
+            td {
+                border: 1px solid #999999;
+                border-left: none;
+                border-right: none;
+            }
+            
+            .table-rasp {
+                border: 1px solid #999999;
+            }
+            
+            .text-sm {
+                font-size: small;
+            }
+            
+            .table-rasp>tbody tr:hover {
+                background-color: rgb(231, 224, 224);
+            }
+            /* switch relevador */
+            
+            .switch_rele {
+                position: relative;
+                display: inline-block;
+                width: 30px;
+                height: 17px;
+            }
+            
+            .switch_rele input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #FF0054;
+                -webkit-transition: .4s;
+                transition: .4s;
+            }
+            
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 13px;
+                width: 13px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                -webkit-transition: .4s;
+                transition: .4s;
+            }
+            
+            input:checked+.slider {
+                background-color: #0cd6a0;
+            }
+            
+            input:focus+.slider {
+                box-shadow: 0 0 1px #0cd6a0;
+            }
+            
+            input:checked+.slider-primary {
+                background-color: #2196F3;
+            }
+            
+            input:focus+.slider-primary {
+                box-shadow: 0 0 1px #2196F3;
+            }
+            
+            input:checked+.slider:before {
+                -webkit-transform: translateX(13px);
+                -ms-transform: translateX(13px);
+                transform: translateX(13px);
+            }
+            /* Rounded sliders */
+            
+            .slider.round {
+                border-radius: 17px;
+            }
+            
+            .slider.round:before {
+                border-radius: 50%;
+            }
+            
+            button.invertir:focus {
+                outline: none;
+            }
+            
+            button.invertir:active {
+                outline: none;
+            }

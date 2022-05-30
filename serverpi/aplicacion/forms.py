@@ -13,7 +13,7 @@ class FormEquipo(FlaskForm):
                           validators=[Required("Tienes que introducir una IP")])
     Puerto = StringField("Puerto:",
                         validators=[Required("Tienes que introducir un Puerto")])
-    Estatus = BooleanField("Estatus:")
+    Polaridad_rele = BooleanField("Invertido:")
     Descripcion = StringField("Descripción:",
                           validators=[Required("Tienes que introducir una descripción")
                                       ])
@@ -25,29 +25,29 @@ class FormEquipo(FlaskForm):
     submit = SubmitField('Guardar')
 
 
-class FormCategoria(FlaskForm):
-    nombre = StringField("Nombre:",
-                         validators=[Required("Tienes que introducir el dato")]
-                         )
-    submit = SubmitField('Enviar')
+# class FormCategoria(FlaskForm):
+#     nombre = StringField("Nombre:",
+#                          validators=[Required("Tienes que introducir el dato")]
+#                          )
+#     submit = SubmitField('Enviar')
 
 
-class FormArticulo(FlaskForm):
-    nombre = StringField("Nombre:",
-                         validators=[Required("Tienes que introducir el nombre")]
-                         )
-    precio = DecimalField("Precio:", default=0,
-                          validators=[Required("Tienes que introducir el precio")
-                                      ])
-    iva = IntegerField("IVA:", default=21,
-                       validators=[Required("Tienes que introducir el dato")])
-    descripcion = TextAreaField("Descripción:")
-    photo = FileField('Selecciona imagen:')
-    stock = IntegerField("Stock:", default=1,
-                         validators=[Required("Tienes que introducir el dato")]
-                         )
-    CategoriaId = SelectField("Categoría:", coerce=int)
-    submit = SubmitField('Enviar')
+# class FormArticulo(FlaskForm):
+#     nombre = StringField("Nombre:",
+#                          validators=[Required("Tienes que introducir el nombre")]
+#                          )
+#     precio = DecimalField("Precio:", default=0,
+#                           validators=[Required("Tienes que introducir el precio")
+#                                       ])
+#     iva = IntegerField("IVA:", default=21,
+#                        validators=[Required("Tienes que introducir el dato")])
+#     descripcion = TextAreaField("Descripción:")
+#     photo = FileField('Selecciona imagen:')
+#     stock = IntegerField("Stock:", default=1,
+#                          validators=[Required("Tienes que introducir el dato")]
+#                          )
+#     CategoriaId = SelectField("Categoría:", coerce=int)
+#     submit = SubmitField('Enviar')
 
 
 class FormSINO(FlaskForm):

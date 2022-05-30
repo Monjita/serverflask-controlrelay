@@ -1,0 +1,321 @@
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 18:26:30 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x5566cdd9d9e0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x5566cdd9d9e0 pid: 37651 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 37651, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 37651|app: 0|req: 1/1] 192.168.1.71 () {40 vars in 1052 bytes} [Mon Oct 25 18:26:39 2021] GET /acciones => generated 27995 bytes in 156 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 37651|app: 0|req: 2/2] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:26:40 2021] GET /favicon.ico => generated 5039 bytes in 10 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 18:30:21 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x558c7d45e9e0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x558c7d45e9e0 pid: 37695 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 37695, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 37695|app: 0|req: 1/1] 192.168.1.71 () {38 vars in 1030 bytes} [Mon Oct 25 18:30:23 2021] GET /acciones => generated 27995 bytes in 162 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 37695|app: 0|req: 2/2] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:30:23 2021] GET /favicon.ico => generated 5039 bytes in 11 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 37695|app: 0|req: 3/3] 192.168.1.71 () {40 vars in 1052 bytes} [Mon Oct 25 18:30:28 2021] GET /acciones => generated 27995 bytes in 22 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 37695|app: 0|req: 4/4] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:30:28 2021] GET /favicon.ico => generated 5039 bytes in 10 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+Gracefully killing worker 1 (pid: 37695)...
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 18:35:51 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+probably another instance of uWSGI is running on the same address (0.0.0.0:5000).
+bind(): Address already in use [core/socket.c line 769]
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 18:42:14 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x556cd9dac9e0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x556cd9dac9e0 pid: 37916 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 37916, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 37916|app: 0|req: 1/1] 192.168.1.71 () {38 vars in 992 bytes} [Mon Oct 25 18:42:17 2021] GET /acciones => generated 27995 bytes in 161 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 37916|app: 0|req: 2/2] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:42:17 2021] GET /favicon.ico => generated 5039 bytes in 11 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+Traceback (most recent call last):
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_login/utils.py", line 272, in decorated_view
+    return func(*args, **kwargs)
+  File "/home/servidor/serverpi/serverpi/./aplicacion/app.py", line 160, in reles
+    sock.connect(server_address)
+ConnectionRefusedError: [Errno 111] Connection refused
+[pid: 37916|app: 0|req: 3/3] 192.168.1.71 () {40 vars in 939 bytes} [Mon Oct 25 18:42:19 2021] POST /reles => generated 0 bytes in 335 msecs (HTTP/1.1 500) 0 headers in 0 bytes (0 switches on core 0)
+[pid: 37916|app: 0|req: 4/4] 192.168.1.71 () {38 vars in 992 bytes} [Mon Oct 25 18:43:29 2021] GET /acciones => generated 27995 bytes in 28 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 37916|app: 0|req: 5/5] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:43:30 2021] GET /favicon.ico => generated 5039 bytes in 8 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 37916|app: 0|req: 6/6] 192.168.1.71 () {40 vars in 939 bytes} [Mon Oct 25 18:43:31 2021] POST /reles => generated 177 bytes in 117 msecs (HTTP/1.1 200) 3 headers in 94 bytes (1 switches on core 0)
+[pid: 37916|app: 0|req: 7/7] 192.168.1.71 () {40 vars in 953 bytes} [Mon Oct 25 18:43:33 2021] POST /change_relay => generated 2 bytes in 318 msecs (HTTP/1.1 200) 3 headers in 92 bytes (1 switches on core 0)
+[pid: 37916|app: 0|req: 8/8] 192.168.1.71 () {38 vars in 992 bytes} [Mon Oct 25 18:43:41 2021] GET /acciones => generated 27995 bytes in 17 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 37916|app: 0|req: 9/9] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:43:41 2021] GET /favicon.ico => generated 5039 bytes in 7 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+Gracefully killing worker 1 (pid: 37916)...
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 18:57:12 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x555a969dc440
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x555a969dc440 pid: 39888 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 39888, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 39888|app: 0|req: 1/1] 192.168.1.71 () {38 vars in 992 bytes} [Mon Oct 25 18:57:15 2021] GET /acciones => generated 27995 bytes in 165 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 39888|app: 0|req: 2/2] 192.168.1.71 () {38 vars in 942 bytes} [Mon Oct 25 18:57:16 2021] GET /favicon.ico => generated 5039 bytes in 10 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+Gracefully killing worker 1 (pid: 39888)...
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 20:09:18 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x562a5169a440
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x562a5169a440 pid: 41318 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 41318, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 41318|app: 0|req: 1/1] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:09:21 2021] GET /comandos => generated 13087 bytes in 151 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 2/2] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:09:22 2021] GET /favicon.ico => generated 5039 bytes in 12 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 3/3] 192.168.100.39 () {36 vars in 1016 bytes} [Mon Oct 25 20:09:25 2021] GET /configuracion/edit => generated 17716 bytes in 80 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 4/4] 192.168.100.39 () {36 vars in 1006 bytes} [Mon Oct 25 20:09:26 2021] GET /acciones => generated 27995 bytes in 49 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 5/5] 192.168.100.39 () {40 vars in 1059 bytes} [Mon Oct 25 20:09:27 2021] GET /acciones => generated 27995 bytes in 24 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 6/6] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:09:27 2021] GET /favicon.ico => generated 5039 bytes in 6 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 7/7] 192.168.100.39 () {40 vars in 1059 bytes} [Mon Oct 25 20:09:35 2021] GET /acciones => generated 27995 bytes in 17 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 8/8] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:09:36 2021] GET /favicon.ico => generated 5039 bytes in 9 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41318|app: 0|req: 9/9] 192.168.100.39 () {36 vars in 996 bytes} [Mon Oct 25 20:09:37 2021] GET /comandos => generated 13087 bytes in 14 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 20:12:42 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x55907991e440
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55907991e440 pid: 41390 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 41390, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 41390|app: 0|req: 1/1] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:12:49 2021] GET /comandos => generated 13087 bytes in 203 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41390|app: 0|req: 2/2] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:12:50 2021] GET /favicon.ico => generated 5039 bytes in 13 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+Gracefully killing worker 1 (pid: 41390)...
+*** Starting uWSGI 2.0.20 (64bit) on [Mon Oct 25 20:14:39 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5000 fd 3
+Python version: 3.8.10 (default, Sep 28 2021, 16:10:42)  [GCC 9.3.0]
+Python main interpreter initialized at 0x55d08d799430
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72904 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55d08d799430 pid: 41515 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 41515, cores: 1)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Categorias.Articulos' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Categorias.Articulos' relationship.
+  mapper = orm.class_mapper(type)
+/home/servidor/serverpi/serverpienv/lib/python3.8/site-packages/flask_sqlalchemy/__init__.py:550: SAWarning: relationship 'Articulos.categoria' will copy column categorias.id to column articulos.CategoriaId, which conflicts with relationship(s): 'Articulos.Categorias' (copies categorias.id to articulos.CategoriaId), 'Categorias.articulos' (copies categorias.id to articulos.CategoriaId). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="Categorias,articulos"' to the 'Articulos.categoria' relationship.
+  mapper = orm.class_mapper(type)
+[pid: 41515|app: 0|req: 1/1] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:14:41 2021] GET /comandos => generated 13087 bytes in 167 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 2/2] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:14:42 2021] GET /favicon.ico => generated 5039 bytes in 12 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 3/3] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:14:57 2021] GET /comandos => generated 13087 bytes in 19 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 4/4] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:14:57 2021] GET /favicon.ico => generated 5039 bytes in 8 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 5/5] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:14:58 2021] GET /comandos => generated 13087 bytes in 32 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 6/6] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:14:58 2021] GET /favicon.ico => generated 5039 bytes in 7 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 7/7] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:14:59 2021] GET /comandos => generated 13087 bytes in 22 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 8/8] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:14:59 2021] GET /favicon.ico => generated 5039 bytes in 8 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 9/9] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:15:00 2021] GET /comandos => generated 13087 bytes in 11 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 10/10] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:15:00 2021] GET /favicon.ico => generated 5039 bytes in 8 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 11/11] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:15:00 2021] GET /comandos => generated 13087 bytes in 20 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 12/12] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:15:00 2021] GET /favicon.ico => generated 5039 bytes in 5 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 13/13] 192.168.100.39 () {36 vars in 996 bytes} [Mon Oct 25 20:15:01 2021] GET /acciones => generated 27995 bytes in 51 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 14/14] 192.168.100.39 () {40 vars in 1049 bytes} [Mon Oct 25 20:15:08 2021] GET /acciones => generated 27995 bytes in 3548 msecs (HTTP/1.1 200) 3 headers in 96 bytes (2 switches on core 0)
+[pid: 41515|app: 0|req: 15/15] 192.168.100.39 () {38 vars in 949 bytes} [Mon Oct 25 20:15:12 2021] GET /favicon.ico => generated 5039 bytes in 6 msecs (HTTP/1.1 404) 3 headers in 102 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 16/16] 192.168.100.39 () {36 vars in 996 bytes} [Mon Oct 25 20:15:15 2021] GET /acciones => generated 27995 bytes in 11 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+[pid: 41515|app: 0|req: 17/17] 192.168.100.39 () {36 vars in 1016 bytes} [Mon Oct 25 20:15:16 2021] GET /configuracion/edit => generated 17716 bytes in 80 msecs (HTTP/1.1 200) 3 headers in 96 bytes (1 switches on core 0)
+Gracefully killing worker 1 (pid: 41515)...
+*** Starting uWSGI 2.0.20 (64bit) on [Tue Oct 26 15:32:02 2021] ***
+compiled with version: 9.3.0 on 18 October 2021 21:42:54
+os: Linux-5.11.0-38-generic #42~20.04.1-Ubuntu SMP Tue Sep 28 20:41:07 UTC 2021
+nodename: servidor-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/servidor/serverpi/serverpi
+detected binary path: /home/servidor/serverpi/serverpienv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 23683
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+probably another instance of uWSGI is running on the same address (0.0.0.0:5000).
+bind(): Address already in use [core/socket.c line 769]

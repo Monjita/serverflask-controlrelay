@@ -1,351 +1,221 @@
-{% extends "base.html" %}
-{% block title %}Acciones{% endblock %}
-{% block contenido %}
+{% extends "base.html" %} {% block title %}Acciones{% endblock %} {% block contenido %}
 <div class="container">
-
-    <div class="row">
-        <div class="table-responsive"> 
-            <table class="table table-bordered table-hover table-sm">
+    <div class="d-flex justify-content-center">
+        <div class="table-responsive ">
+            <table class="table table-sm table-rasp" style="background-color: white;">
                 <thead class="table-dark">
                     <tr>
                         <th class="text-center">Nombre</th>
                         <th class="text-center">Dirección IP</th>
                         <th class="text-center">Puerto</th>
                         <th class="text-center">Descripción</th>
-                        <th></th>
+                        <th class="text-center">Relevadores</th>
                         <th class="text-center">Editar</th>
+                        <th class="text-center">Tareas</th>
                     </tr>
                 </thead>
-            {% for equipo in raspberrys %}
-                <tbody>  
-                    <tr>
-                        <td>{{equipo.Nombre}}</td>
-                        <td class="text-center">{{equipo.IP}}</td>
-                        <td class="text-center">{{equipo.Puerto}}</td>
-                        <td class="text-center">{{equipo.Descripcion}}</td>
-                        <td class="text-center"><button type="button" class="btn btn-success btn-sm" onclick="reles('{{equipo.Nombre}}','{{equipo.IP}}')" id="{{equipo.id}}">Relevadores</button></td>
-                        <td class="text-center">
+                <tbody class="">
+                    {% for equipo in raspberrys %}
+                    <tr class="text-sm ">
+                        <td class="align-middle">{{equipo.Nombre}}</td>
+                        <td class="text-center align-middle">{{equipo.IP}}</td>
+                        <td class="text-center align-middle">{{equipo.Puerto}}</td>
+                        <td class="text-center align-middle">{{equipo.Descripcion}}</td>
+                        <td class="text-center align-middle"><button type="button" class="btn btn-outline-primary border-0" onclick="reles('{{equipo.Nombre}}','{{equipo.IP}}')" id="{{equipo.id}}"><i class="fas fa-sitemap" style="font-size:20px;"></i></button></td>
+                        <td class="text-center align-middle">
                             <button type="button" class="btn btn-outline-primary border-0" id="{{equipo.IP}}" onclick="editarRelay('{{equipo.IP}}','{{equipo.Nombre}}')"><i class="fas fa-edit" style="font-size:20px;"></i></button>
                         </td>
+                        <td class="text-center align-middle"><a type="button" class="btn  btn-outline-primary border-0" href="{{url_for('tareas', id=equipo.id)}}" role="button"><i class="far fa-calendar-alt" style="font-size:20px;"></i></a></td>
                     </tr>
+                    {% endfor %}
                 </tbody>
-            {% endfor %}
             </table>
-          </div> 
+        </div>
     </div>
 </div>
 
-<!-- Modal Relevadores --> 
+<!-- Modal Relevadores -->
 
-<div class="modal fade" id="modal_reles" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
+<div class="modal fade" id="modal_reles" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header d-flex  justify-content-between">
-                <div class="">
-                    <h5 class="modal-title">Relevadores de: <span class="text-danger" id="tituloModal"></span></h5>
+        <div class="modal-content">
+            <div class="modal-header d-flex  justify-content-between">
+                <div class="d-flex flex-row">
+                    <div>
+                        <h6 class="modal-title">Relevadores de: <span class="text-danger" id="tituloModal"></span></h6>
+                    </div>
+                    <!-- <div class="ml-5 mt-2" id="cargando_modal" style="display: block;">
+                        <div class="ml-5">
+                            <h4 class="text-danger text-sm">Espernado respuesta ...</h4>
+                        </div>
+                    </div> -->
                 </div>
-                <div class="">
-                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fas fa-undo-alt"></i>&nbsp;&nbsp;Regresar</button>
-                </div>
-        </div>
-        <div class="modal-body" id="bodyModal">
-            <div id="cargando_reles" class="d-flex flex-column" style="display: block;">
-                <div class="text-center">   
-                <i class="fas fa-spinner fa-spin fa-3x"></i>
-                </div>
-                <div class=" text-center mt-2">
-                    <h5 class="text-danger">Cargando, un momento...</h5>
+                <div id="opciones">
                 </div>
             </div>
-            <div id="tabla_reles" style="display: none;">
-                <table class="table table-bordered table-hover table-sm">
-                    <thead class="table-dark">
-                         <tr class="d-flex">
-                        <th class="text-center col-4">Nombre</th>
-                        <th class="text-center col-2">Pin</th>
-                        <th class="text-center col-3">Estatus</th>
-                        <th class="text-center col-3 text-sm-sm">Tareas</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablebodylol">
-        
-                    </tbody>
-                </table>
+            <div class="modal-body" id="bodyModal">
+                <div id="cargando_reles" class="d-flex flex-column" style="display: block;">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin fa-3x"></i>
+                    </div>
+                    <div class=" text-center mt-2">
+                        <h5 class="text-danger">Cargando, un momento...</h5>
+                    </div>
+                </div>
+                <div id="tabla_reles" style="display: none;">
+                    <table class="table table-bordered table-sm text-sm">
+                        <thead class="table-dark">
+                            <tr class="d-flex">
+                                <th class="text-center col-6">Nombre</th>
+                                <th class="text-center col-2">Pin</th>
+                                <th class="text-center col-2">Estatus</th>
+                                <th class="text-center col-2">Invertir</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablebodylol">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div id="nomenclatura" style="display: none;">
+                    <div class="d-flex flex-row justify-content-start ml-2">
+                        <div class="text-sm text-primary">
+                            <i class="far fa-circle"></i>&nbsp;<span class="text-dark">Lógica normal</span>
+                        </div>
+                        <div class="text-sm text-primary ml-2">
+                            <i class="fas fa-circle"></i>&nbsp;<span class="text-dark">Lógica inversa</span>
+                        </div>
+                        <div class="ml-2" style="margin-top: 2px;">
+                            <label class="switch_rele">
+                                <input type="checkbox" disabled >
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="text-sm mx-2">
+                            Off
+                        </div>
+                        <div class="" style="margin-top: 2px;">
+                            <label class="switch_rele">
+                                <input type="checkbox" checked="on" disabled>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="text-sm mx-2">
+                            On
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-end mr-2 mt-2" id="btn-cambios">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-start">
             </div>
         </div>
-        <div class="modal-footer d-flex justify-content-center">
-            
-        </div> 
-      </div>
     </div>
 </div>
 
 <!--  Modal editar relevador -->
-<div class="modal fade" id="modal_editar_reles" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
+<div class="modal fade" id="modal_editar_reles" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header d-flex justify-content-center">
-          <h5 class="modal-title">Editar relevadores de: <span class="text-danger" id="titulo_editar"></span></h5>
-        </div>
-        <div class="modal-body" id="bodyModal">
-            <div id="cargando_editar" class="" style="display: none;">
-                <div class="text-center">   
-                <i class="fas fa-spinner fa-spin fa-3x"></i>
-                </div>
-                <div class=" text-center mt-2">
-                    <h5 class="text-danger">Cargando, un momento...</h5>
-                </div>
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center">
+                <h5 class="modal-title">Editar relevadores de: <span class="text-danger" id="titulo_editar"></span></h5>
             </div>
-            <div  id = "editar_select" style="display: none;" >
-                <div class="d-flex flex-column" > 
-                    <div class="">
-                    <!-- <h6 class="text-primary text-center">Selecciona un relevador a editar</h6> -->
-                        <div class="d-flex justify-content-center">
-                            <div id="select_relay" class="col-5">
+            <div class="modal-body" id="bodyModal">
+                <div id="cargando_editar" class="" style="display: none;">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin fa-3x"></i>
+                    </div>
+                    <div class=" text-center mt-2">
+                        <h5 class="text-danger">Cargando, un momento...</h5>
+                    </div>
+                </div>
+                <div id="editar_select" style="display: none;">
+                    <div class="d-flex flex-column">
+                        <div class="">
+                            <!-- <h6 class="text-primary text-center">Selecciona un relevador a editar</h6> -->
+                            <div class="d-flex justify-content-center">
+                                <div id="select_relay" class="col-md-5 col-7">
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-center mt-4">
-                        <div class="d-flex" >
-                            <div class="input-group input-group-sm col-8">
-                                <div class="input-group-prepend ">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">Nombre:</span>
+                        <div class="d-flex justify-content-center mt-4">
+                            <div class="d-flex">
+                                <div class="input-group input-group-sm col-8">
+                                    <div class="input-group-prepend ">
+                                        <span class="input-group-text" id="inputGroup-sizing-sm">Nombre:</span>
+                                    </div>
+                                    <input type="text" id="nombre_relay" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Nombre">
                                 </div>
-                                <input type="text"  id="nombre_relay" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Nombre">
-                            </div>
-                            <div class="input-group input-group-sm col-4">
-                                <div class="input-group-prepend ">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">Pin:</span>
+                                <div class="input-group input-group-sm col-4">
+                                    <div class="input-group-prepend ">
+                                        <span class="input-group-text" id="inputGroup-sizing-sm">Pin:</span>
+                                    </div>
+                                    <input type="text" id="pin_relay" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Pin">
                                 </div>
-                                <input type="text"  id="pin_relay" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Pin">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal-footer d-flex justify-content-center">
-            <div>
-                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fas fa-undo-alt"></i>&nbsp;&nbsp;Regresar</button>
+            <div class="modal-footer d-flex justify-content-center">
+                <div>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fas fa-undo-alt"></i>&nbsp;&nbsp;Regresar</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="guardar_relay()"><i class="fas fa-check-circle"></i>&nbsp;&nbsp;Aceptar</button>
+                    <input type="text" style="display: none;" id="ip_edit_reles">
+                </div>
             </div>
-            <div>
-                <button type="button" class="btn btn-sm btn-primary" onclick="guardar_relay()"><i class="fas fa-check-circle"></i>&nbsp;&nbsp;Aceptar</button>
-                <input type="text" style="display: none;" id="ip_edit_reles"> 
-            </div>
         </div>
-      </div>
     </div>
 </div>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-
-function makePostRequest(data) {
-    queryObj = { name: data };
-    axios.post('/test', queryObj).then(
-        (response) => {
-            var result = response.data;
-            console.log(result);
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
-}
-
-function m_relay(dato){
-    var array = dato.id.split("_");
-    queryObj = { name: array[0],
-                 relay: array[1],
-                 pin: array[2],
-                 codigo: 'change_relay',
-                 estatus: dato.checked };
-
-    //console.log(queryObj);
-
-    axios.post('/change_relay', queryObj).then(
-          (response) => {
-             // var result = response.data;
-            // console.log(result);
-            Swal.fire({
-                  position: 'center',
-                  icon: 'success',
-                  title: 'Cambio realizado con exito',
-                  showConfirmButton: false,
-                  timer: 1250,
-                });
-          },
-          (error) => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Ocurrio un error',
-              //text: '',
-            });
-              console.log(error);
-          }
-      );
-}
-
-function reles(data, ip){
-    //document.getElementById('tablebodylol').innerHTML = "";
-    document.getElementById('cargando_reles').style.display = 'block';
-    document.getElementById('cargando_reles').className = 'd-flex flex-column';
-    document.getElementById('tabla_reles').style.display = 'none';
-    document.getElementById("tituloModal").innerText = data;
-    $('#modal_reles').modal({backdrop: 'static', keyboard: false});  
-    queryObj = {    codigo: 'estatus_relay',
-                    ip: ip,
-                 };
-    //console.log(data);
-    axios.post('/reles', queryObj).then(
-        (response) => {
-          var result = response.data;
-         // console.log(result);
-         //  for(var k in result) {
-           //     console.log(k, result[k]);
-           //    }
-        
-        document.getElementById("cargando_reles").style.display = 'none';
-
-        let json = response.data;
-        
-        let tableText = "";
-            for(var k in result) {
-                var array = result[k].split(",");
-                tableText += "<tr class='d-flex'>";
-                tableText += "<td class='col-4'>"+k+"</td>"; //nombre del pin
-                tableText += "<td class='text-center col-2'>"+array[0]+"</td>"; //pin
-                tableText += '<td class="d-flex justify-content-center col-3"><div class="">'+
-                                    '<div class="onoffswitch">';
-                if(array[1] == 'True'){ //estado del pin
-                    tableText += '<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="'+data+'_'+k+'_'+array[0]+'" onchange="m_relay(this)" tabindex="0" checked="on">';
-                }
-                else{
-                    tableText += '<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="'+data+'_'+k+'_'+array[0]+'" onchange="m_relay(this)" tabindex="0">';
-                }
-                tableText += '<label class="onoffswitch-label" for="'+data+'_'+k+'_'+array[0]+'">'+
-                                            '<span class="onoffswitch-inner"></span>'+
-                                            '<span class="onoffswitch-switch"></span>'+
-                                        '</label>'+
-                                    '</div>'+
-                                '</div></td>';
-                tableText += '<td class="text-center col-3"><button type="button" class="btn  btn-outline-primary border-0"><i class="far fa-calendar-alt" style="font-size:20px;"></i></button></td>';
-                
-               // tableText += "<td>"+result[k]+"</td>";
-                tableText += "</tr>";
-            }
-        document.getElementById('tablebodylol').innerHTML = tableText;
-        document.getElementById('tabla_reles').style.display = 'block';
-        document.getElementById('cargando_reles').className = '';
-
-
-        //console.log(tableText);
-        },
-        (error) => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Ocurrio un error',
-              //text: '',
-            });
-            console.log(error);
-        }
-    );
-    //$('#modal_reles').modal("show");
-    }
-
-    function guardar_relay(){
-        let ip = document.getElementById("ip_edit_reles").value; //ip oculto en edit reles
-        let rele_ant = document.getElementById("select_pin").value; //nombre y pin
-        let array = rele_ant.split("_");
-        let nombre_nuevo = document.getElementById('nombre_relay').value; 
-        let pin_nuevo = document.getElementById('pin_relay').value; 
-       // console.log(ip, array[0], array[1]);
-       let ban = 0; 
-       if(rele_ant != ""){
-            if(nombre_nuevo == '' || pin_nuevo == ''){
-                error('Llena todos los campos');
-                ban = 1;
-            }
-            else{
-                ban = 0;
-            }
-        }
-        else{
-          error('Selecciona un relevador');
-            ban = 1;
-        }
-        console.log(ban);
-        if(ban == 0){
-            queryObj = {  codigo : 'cambio_pin', //codigo de raspberry
-                        ip: ip,
-                        name_ant: array[0], //nombre del pin seleccionado
-                        pin_ant: array[1], //numero de pin seleccionado
-                        name_new: nombre_nuevo,
-                        pin_new: pin_nuevo,
-                    };
-            axios.post('/reles/editar', queryObj).then(
-                (response) => {
-                    Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Cambio realizado con exito',
-                    showConfirmButton: false,
-                    timer: 1250,
-                    });
-                },
-                (error) => {
-                    error('Ocurrio un error');
-                    console.log(error);
-                }
-            );
-        }
-      
-    }
-
-    function relaypin(item){
-        if(item.value != ""){
-            var array = item.value.split("_"); //nombre y pin
-            document.getElementById("nombre_relay").value = array[0];
-            document.getElementById("pin_relay").value = array[1];
-        }
-        else{
-            document.getElementById("nombre_relay").value = '';
-            document.getElementById("pin_relay").value = '';
-        }
-    }
-    
-    function editarRelay(ip, name){
-        document.getElementById('cargando_editar').style.display = 'block';
-        document.getElementById('cargando_editar').className = 'd-flex flex-column';
-        document.getElementById('editar_select').style.display = 'none';
-        document.getElementById("nombre_relay").value = '';
-        document.getElementById("pin_relay").value = '';
-        document.getElementById("titulo_editar").innerText = name;
-        document.getElementById("ip_edit_reles").value = ip;
-        $('#modal_editar_reles').modal({backdrop: 'static', keyboard: false});
-        queryObj = { codigo: 'estatus_relay', //codigo para retornar los relevadores
-                     ip: ip,
-                    };
-        axios.post('/reles', queryObj).then(
+    function makePostRequest(data) { //funcion test
+        queryObj = {
+            name: data
+        };
+        axios.post('/test', queryObj).then(
             (response) => {
-              //  console.log(response.data);
-                document.getElementById("cargando_editar").style.display = 'none';
-                var json = response.data;
-                let lista = ""; //componente select
-                lista = '<select class="form-control" onchange="relaypin(this)" id="select_pin">';
-                lista += '<option value="" class="text-center">Elige un relay</option>'
-                for(var k in json) {
-                    var array = json[k].split(",");
-                    lista += '<option value="'+k+'_'+array[0]+'">'+k+'</option>';
-                }
-                lista += '</select>';
-                document.getElementById('select_relay').innerHTML = lista;
-                document.getElementById('editar_select').style.display = 'block';
-                document.getElementById('cargando_editar').className = '';    
+                var result = response.data;
+                console.log(result);
             },
             (error) => {
+                console.log(error);
+            }
+        );
+    }
+    //cambia el estado del relay individualmente, sin uso, no borrar
+    function m_relay(dato) { 
+        var array = dato.id.split("_");
+        queryObj = {
+            name: array[0],
+            relay: array[1],
+            pin: array[2],
+            codigo: 'change_relay',
+            estatus: dato.checked
+        };
+        document.getElementById("recargar").disabled = true;
+        document.getElementById("icon-recarga").className = "fas fa-sync-alt fa-spin";
+        axios.post('/change_relay', queryObj).then(
+            (response) => {
+                document.getElementById("recargar").disabled = false;
+                document.getElementById("icon-recarga").className = "fas fa-sync-alt";
+                consulta();
+            },
+            (error) => {
+                document.getElementById("recargar").disabled = false;
+                document.getElementById("icon-recarga").className = "fas fa-sync-alt";
+                if(dato.checked == false){
+                    dato.checked = true;
+                }
+                else{
+                    dato.checked = false;
+                }
                 Swal.fire({
                     icon: 'error',
                     title: 'Ocurrio un error',
@@ -355,12 +225,383 @@ function reles(data, ip){
             }
         );
     }
-    
-    function editarRelay2(item){ //funcion sin uso
+
+    function polaridad(item) { //funcion sin uso
+        var datos = document.getElementById('recargar').value;
+        var array = datos.split(",");
+        console.log(array[1], item.checked);
+        queryObj = {
+            codigo: 'invertir_all_reles',
+            name: array[0],
+            ip: array[1],
+            check: item.checked,
+        };
+        axios.post('/polaridad', queryObj).then(
+            (response) => {
+
+            },
+            (error) => {
+                error('Ocurrio un error')
+                console.log(error);
+            }
+        );
+    }
+    //funcion para realizar todos los cambios de los relevadores y logica
+    function enviar_cambios(){
+         // tablebodylol
+         var data = [];
+         var pines = document.querySelectorAll('.valor-pin');
+         pines.forEach(function (pin, index) {
+             data.push(pin.innerText);
+         });
+         var checks = document.querySelectorAll('.valor-check');
+         checks.forEach(function (check, index) {
+             data[index] = data[index]+','+check.checked;
+         });
+         var logicas = document.querySelectorAll('.valor-logica');
+         logicas.forEach(function (logica, index) {
+             data[index] = data[index]+','+logica.value;
+         });
+         var datos = {codigo: 'acciones_all',
+                        ip: document.getElementById('cambios_all').value}; //JSON CON LOS DATOS NECESARIOS   
+         var array = [];
+         data.forEach(function (elemento, index) {
+            array = elemento.split(",");
+            datos[array[0]] = array[1]+','+array[2]; //pin(int) - estatus(true,false) - logica(0,1) normal-inversa
+        });
+         //console.log(datos);
+        Swal.fire({
+            title: 'Confirmar cambios',
+           // text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+            }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('cargando_reles').style.display = 'block';
+                document.getElementById('cargando_reles').className ='d-flex flex-column';
+                document.getElementById('tabla_reles').style.display = 'none';
+                document.getElementById('nomenclatura').style.display = 'none';
+
+                axios.post('/acciones_all',datos).then(
+                    (response) => {
+                        document.getElementById('cargando_reles').style.display = 'none';
+                        document.getElementById('tabla_reles').style.display = 'block';
+                        document.getElementById('nomenclatura').style.display = 'block';
+                        document.getElementById('cargando_reles').className = '';
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Cambios realizados',
+                            showConfirmButton: false,
+                            timer: 1500
+                            });
+                    },
+                    (error) => {        
+                        document.getElementById('cargando_reles').style.display = 'none';
+                        document.getElementById('tabla_reles').style.display = 'block';
+                        document.getElementById('nomenclatura').style.display = 'block';
+                        document.getElementById('cargando_reles').className = '';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            //text: '',
+                        });
+                        console.log(error);
+                    }
+                );
+               // document.getElementById('recargar').disabled = false;
+            }
+        });
         
-        queryObj = { codigo: 'estatus_relay',
-                     ip: item,
-                    };
+         //AQUI VA FUNCION DE AXIOS, FALTA IMPLEMENTAR TAMBIEN LA FUNCION EN LA RASPBERRY
+
+    }
+
+    function reles(data, ip) { //consulta el estado de los relevadores 
+        document.getElementById('cargando_reles').style.display = 'block';
+        document.getElementById('cargando_reles').className = 'd-flex flex-column';
+        document.getElementById('tabla_reles').style.display = 'none';
+        document.getElementById('nomenclatura').style.display = 'none';
+        document.getElementById("tituloModal").innerText = data;
+        document.getElementById("opciones").innerHTML = '<button type="button" class="btn btn-sm btn-outline-primary border-0 " id="recargar" value="' + data + ',' + ip + '" disabled onclick="consulta()"><i id="icon-recarga" class="fas fa-sync-alt" ></i></button> <button type="button" class="btn btn-sm btn-outline-danger text-sm border-0 ml-2 " data-dismiss="modal"><i class="fas fa-times-circle fa-lg" ></i></button>';
+        document.getElementById("btn-cambios").innerHTML = '<button class="btn btn-sm btn-success" value="'+ip+'" onclick="enviar_cambios()" id="cambios_all">Realizar cambios</button>';
+        $('#modal_reles').modal({backdrop: 'static',keyboard: false});
+        queryObj = {
+            codigo: 'estatus_relay',
+            ip: ip,
+        };
+        axios.post('/reles', queryObj).then(
+            (response) => {
+                var result = response.data;
+                document.getElementById("recargar").disabled = false;
+                document.getElementById("cargando_reles").style.display = 'none';
+                let json = response.data;
+                let tableText = "";
+                for (var k in result) {
+                    var array = result[k].split(",");
+                    tableText += "<tr class='d-flex'>";
+                    tableText += "<td class='col-6 pl-2'>" + k + "</td>"; //nombre del pin
+                    tableText += "<td class='text-center col-2 valor-pin'>" + array[0] + "</td>"; //pin
+                    tableText += '<td class="d-flex justify-content-center col-2"><div class="" >'+
+                        '<label class="switch_rele">';
+                            //se comentan los dos siguientes tableText ya que esos contienen funciones para cambios individuales
+                    if (array[1] == 'True') { //estado del pin
+                       // tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" class="valor-check" onchange="m_relay(this)"  checked="on">';
+                        tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" class="valor-check"  checked="on">';
+                    }
+                    else {
+                      //  tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" class="valor-check" onchange="m_relay(this)" >';
+                        tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" class="valor-check">';
+                    }
+                    tableText += '<span class="slider round"></span></label></div></td>';
+                    if(array[2] == 'True') //logica inversa activada
+                        tableText += '<td class=" text-center col-2"><button onclick="polaridad_rele(this)" id="' + ip +'_' + array[0]+'_'+array[1]+'" value="1" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="fas fa-circle"></i></button></td>';
+                    else{
+                        tableText += '<td class=" text-center col-2"><button onclick="polaridad_rele(this)" id="' + ip +'_' + array[0]+'_'+array[1]+'" value="0" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="far fa-circle"></i></button></td>';
+                    }
+                    tableText += "</tr>";
+                }
+                document.getElementById('tablebodylol').innerHTML = tableText;
+                document.getElementById('tabla_reles').style.display = 'block';
+                document.getElementById('nomenclatura').style.display = 'block';
+                document.getElementById('cargando_reles').className = '';
+            },
+            (error) => {
+                //document.getElementById("recargar").disabled = false;
+                $('#modal_reles').modal('hide');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ocurrio un error',
+                    //text: '',
+                });
+                console.log(error);
+            }
+        );
+    }
+
+    //logica de polaridad por relevador
+    function polaridad_rele(item){
+         console.log(!item.value);
+        var array = item.id.split("_");
+        queryObj = {
+            codigo: 'invertir_rele',
+            rele: array[1],
+            ip: array[0],
+            estatus: array[2],
+            check: item.value,
+        };
+        //funcion que cambia el icono
+        if(item.value == '1'){ //logica inversa activada
+        document.getElementById(item.id).value = 0;
+        item.innerHTML = '<i class="far fa-circle"></i>';
+        }
+        else{
+        document.getElementById(item.id).value = 1;
+        item.innerHTML = '<i class="fas fa-circle"></i>';
+        }
+        ///aqui acaba
+        //el axios es para cambio individual en timpo real
+      //  axios.post('/polaridad_rele', queryObj).then(
+      //      (response) => {
+      //          consulta();
+      //      },
+      //      (error) => {
+      //          //$('#modal_reles').modal('hide');
+      //          Swal.fire({
+      //              icon: 'error',
+      //              title: 'Ocurrio un error',
+      //              //text: '',
+      //          });
+      //          console.log(error);
+      //      }
+      //  );
+    }
+
+    //editamos nombre y/o pin relevador
+    function guardar_relay() {
+        let ip = document.getElementById("ip_edit_reles").value; //ip oculto en edit reles
+        let rele_ant = document.getElementById("select_pin").value; //nombre y pin
+        let array = rele_ant.split("_");
+        let nombre_nuevo = document.getElementById('nombre_relay').value;
+        let pin_nuevo = document.getElementById('pin_relay').value;
+        let ban = 0;
+        if (rele_ant != "") {
+            if (nombre_nuevo == '' || pin_nuevo == '') {
+                error('Llena todos los campos');
+                ban = 1;
+            } else {
+                ban = 0;
+            }
+        } else {
+            error('Selecciona un relevador');
+            ban = 1;
+        }
+        if (ban == 0) {
+            queryObj = {
+                codigo: 'cambio_pin', //codigo de raspberry
+                ip: ip,
+                name_ant: array[0], //nombre del pin seleccionado
+                pin_ant: array[1], //numero de pin seleccionado
+                name_new: nombre_nuevo,
+                pin_new: pin_nuevo,
+            };
+            axios.post('/reles/editar', queryObj).then(
+                (response) => {
+                    //console.log(response.data);
+                    if (response.data == 'error') {
+                        error('El pin ya esta en uso');
+                    } else {
+                        $('#modal_editar_reles').modal('hide');
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Cambio realizado con exito',
+                            showConfirmButton: false,
+                            timer: 1250,
+                        });
+                    }
+                },
+                (error) => {
+                    error('Ocurrio un error');
+                    console.log(error);
+                }
+            );
+        }
+    }
+
+    function relaypin(item) { //pone en el input el rele seleccionado
+        if (item.value != "") {
+            var array = item.value.split("_"); //nombre y pin
+            document.getElementById("nombre_relay").value = array[0];
+            document.getElementById("pin_relay").value = array[1];
+        } else {
+            document.getElementById("nombre_relay").value = '';
+            document.getElementById("pin_relay").value = '';
+        }
+    }
+
+    function consulta() {
+        document.getElementById("recargar").disabled = true;
+        //document.getElementById('cargando_reles').style.display = 'block';
+        //document.getElementById('cargando_reles').className = 'd-flex flex-column';
+        //document.getElementById('tabla_reles').style.display = 'none';
+        document.getElementById("icon-recarga").className = "fas fa-sync-alt fa-spin";
+        //<i class="fas fa-spinner fa-spin fa-3x"></i>
+        var datos = document.getElementById("recargar").value;
+        var array = datos.split(",");
+        let ip = array[1];
+        let data = array[0];
+
+        queryObj = {
+            codigo: 'estatus_relay', //codigo para retornar los relevadores
+            ip: ip,
+        };
+
+        axios.post('/reles', queryObj).then(
+            (response) => {
+
+                document.getElementById("icon-recarga").className = "fas fa-sync-alt";
+                document.getElementById('tablebodylol').innerHTML = "";
+                //document.getElementById("cargando_reles").style.display = 'none';
+                document.getElementById("recargar").disabled = false;
+                var result = response.data;
+                let tableText = "";
+                for (var k in result) {
+                    var array = result[k].split(",");
+                    tableText += "<tr class='d-flex'>";
+                    tableText += "<td class='col-6 pl-2'>" + k + "</td>"; //nombre del pin
+                    tableText += "<td class='text-center col-2 valor-pin'>" + array[0] + "</td>"; //pin
+                    tableText += '<td class="d-flex justify-content-center col-2"><div class="" >'+
+                        '<label class="switch_rele">';
+                     //se comentan los dos siguientes tableText ya que esos contienen funciones para cambios individuales
+                    if (array[1] == 'True') { //estado del pin
+                        //tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" onchange="m_relay(this)" class="valor-check" checked="on">';
+                        tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" class="valor-check" checked="on">';
+                    }
+                    else {
+                        //tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" onchange="m_relay(this)" class="valor-check">';
+                        tableText += '<input type="checkbox" id="' + data + '_' + k + '_' + array[0] + '" class="valor-check">';
+                    }
+                    tableText += '<span class="slider round"></span></label></div></td>';
+                    if(array[2] == 'True') //logica invertida activada
+                        tableText += '<td class=" text-center col-2"><button onclick="polaridad_rele(this)" id="' + ip +'_' + array[0]+'_'+array[1]+'" value="1" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="fas fa-circle"></i></button></td>';
+                    else{
+                        tableText += '<td class=" text-center col-2"><button onclick="polaridad_rele(this)" id="' + ip +'_' + array[0]+'_'+array[1]+'" value="0" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="far fa-circle"></i></button></td>';
+                    }
+                    tableText += "</tr>";
+                }
+                document.getElementById('tablebodylol').innerHTML = tableText;
+                //document.getElementById('tabla_reles').style.display = 'block';
+                //document.getElementById('cargando_reles').className = '';
+            },
+            (error) => {
+                //$('#modal_reles').modal('hide');
+                document.getElementById("icon-recarga").className = "fas fa-sync-alt";
+                document.getElementById("recargar").disabled = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ocurrio un error',
+                    //text: '',
+                });
+                console.log(error);
+            }
+        );
+    }
+
+    function editarRelay(ip, name) { //consulta los reles y abre el modal para editar reles
+        document.getElementById('cargando_editar').style.display = 'block';
+        document.getElementById('cargando_editar').className = 'd-flex flex-column';
+        document.getElementById('editar_select').style.display = 'none';
+        document.getElementById("nombre_relay").value = '';
+        document.getElementById("pin_relay").value = '';
+        document.getElementById("titulo_editar").innerText = name;
+        document.getElementById("ip_edit_reles").value = ip;
+        $('#modal_editar_reles').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+        queryObj = {
+            codigo: 'estatus_relay', //codigo para retornar los relevadores
+            ip: ip,
+        };
+        axios.post('/reles', queryObj).then(
+            (response) => {
+                document.getElementById("cargando_editar").style.display = 'none';
+                var json = response.data;
+                let lista = ""; //componente select
+                lista = '<select class="form-control" onchange="relaypin(this)" id="select_pin">';
+                lista += '<option value="" class="text-center">Elige un relay</option>'
+                for (var k in json) {
+                    var array = json[k].split(",");
+                    lista += '<option value="' + k + '_' + array[0] + '">' + k + '</option>';
+                }
+                lista += '</select>';
+                document.getElementById('select_relay').innerHTML = lista;
+                document.getElementById('editar_select').style.display = 'block';
+                document.getElementById('cargando_editar').className = '';
+            },
+            (error) => {
+                $('#modal_editar_reles').modal('hide');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ocurrio un error',
+                    //text: '',
+                });
+                console.log(error);
+            }
+        );
+    }
+
+    function editarRelay2(item) { //funcion sin uso
+
+        queryObj = {
+            codigo: 'estatus_relay',
+            ip: item,
+        };
 
         axios.post('/reles', queryObj).then(
             (response) => {
@@ -368,30 +609,30 @@ function reles(data, ip){
                 var result = response.data;
                 document.getElementById("cargando_editar").style.display = 'none';
                 let tableText = "";
-                for(var k in result){
+                for (var k in result) {
                     var array = result[k].split(",");
-                   // tableText += "<tr class='d-flex'>";
-                  //  tableText += "<td class='col-4'>"+k+"</td>"; //nombre
-                  //  tableText += "<td class='col-4'>"+array[0]+"</td>";
-                  //  tableText += "</tr>";
-                tableText += "<div class='d-flex flex-row justify-content-center'>";
-                tableText +=  '<div class="col-md-8">'+
-                    '<div class="input-group input-group-sm mb-3">'+
-                    '<div class="input-group-prepend">'+
-                    '<span class="input-group-text">Nombre: </span>'+
-                    '</div>'+
-                    '<input type="text"  class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="'+k+'">'+
-                    '</div>'+
-                    '</div>'+
-                    '<div class="col-md-4">'+
-                    '<div class="input-group input-group-sm mb-3">'+
-                    '<div class="input-group-prepend">'+
-                    '<span class="input-group-text" id="inputGroup-sizing-sm">Pin: </span>'+
-                    '</div>'+
-                    '<input type="text"  class="form-control" aria-label="Small"aria-describedby="inputGroup-sizing-sm" value="'+array[0]+'">'+
-                    '</div>'+
-                    '</div>';
-                tableText += '</div>'
+                    // tableText += "<tr class='d-flex'>";
+                    //  tableText += "<td class='col-4'>"+k+"</td>"; //nombre
+                    //  tableText += "<td class='col-4'>"+array[0]+"</td>";
+                    //  tableText += "</tr>";
+                    tableText += "<div class='d-flex flex-row justify-content-center'>";
+                    tableText += '<div class="col-md-8">' +
+                        '<div class="input-group input-group-sm mb-3">' +
+                        '<div class="input-group-prepend">' +
+                        '<span class="input-group-text">Nombre: </span>' +
+                        '</div>' +
+                        '<input type="text"  class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="' + k + '">' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-md-4">' +
+                        '<div class="input-group input-group-sm mb-3">' +
+                        '<div class="input-group-prepend">' +
+                        '<span class="input-group-text" id="inputGroup-sizing-sm">Pin: </span>' +
+                        '</div>' +
+                        '<input type="text"  class="form-control" aria-label="Small"aria-describedby="inputGroup-sizing-sm" value="' + array[0] + '">' +
+                        '</div>' +
+                        '</div>';
+                    tableText += '</div>'
                 }
                 document.getElementById('inputs_reles').innerHTML = tableText;
                 document.getElementById('inputs_reles').style.display = 'block';
@@ -407,14 +648,13 @@ function reles(data, ip){
         );
     }
 
-    function error(text){
+    function error(text) {
         Swal.fire({
-                icon: 'error',
-                title:  text,
-                //text: '',
+            icon: 'error',
+            title: text,
+            //text: '',
         });
     }
-
 </script>
 
 {% endblock %}

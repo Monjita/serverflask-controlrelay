@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}titulo{% endblock %}
+{% block contenido %}
+<!--
+
+    <div class="container border border-dark" style="background-color: white;">
+        <div class="d-flex flex-column mt-2">
+            <div class="py-2">
+                <h2 class="form-signin-heading text-center">Envio de comandos por SHH</h2>
+            </div>
+            <div class="py-2 row d-md-flex  justify-content-md-center mt-0 mt-md-5">
+                <div class="col-md-3 col-12 my-2 my-md-0 ">
+                    <select class="form-control form-control-sm" id="select" onchange="equipo(this)">
+                        <option value="#" class="text-center">Seleccione un dispositivo</option>
+                        {% for eq in equipos %}
+                            <option value="{{eq.IP}}">{{eq.Nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 col-12 my-2 my-md-0">
+                    <input type="text" class="form-control form-control-sm text-center" id="ip_ssh" readonly placeholder="Direeción IP" >
+                </div>
+            </div>
+            <div class="py-2 row mt-md-4  d-md-flex justify-content-md-center ">
+                <div class="col-md-6 col-12">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend ">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Comando: </span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  id="comando" autofocus>
+                    </div>
+                </div>
+                <div class="col-md-4 col-12 text-center text-md-right my-2 my-md-0">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="test(1)">Reiniciar dispositivo</button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="test(0)">Enviar comando</button>
+                </div>
+            </div>
+            <div class="col-12 d-md-flex justify-content-md-center mb-4">
+                <div class="col-md-8 mt-md-4">
+                <div class="text-center">Respuesta de dispositivo</div>
+                <textarea class="form-control " rows="5" id="respuesta"></textarea>
+                </div>
+            </div>
+        </div>
+    </div> 
+-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 pt-md-5 mt-md-4">
+            <div class="form-group">
+                <select class="form-control" id="select" onchange="equipo(this)">
+                   <option value="#" class="text-center">Seleccione un dispositivo</option>
+                   {% for eq in equipos %}
+                       <option value="{{eq.IP}}">{{eq.Nombre}}</option>
+                   {% endfor %}
+               </select>
+           </div>
+            <div class="d-flex flex-column my-sm-2">
+                <div class="my-2">
+                    <input type="text" class="form-control form-control-sm text-center" id="ip_ssh" readonly placeholder="Direeción IP del dispositivo" >
+                </div>
+                <div class="my-2">
+                    <button type="button" class="btn btn-block btn-warning btn-sm" onclick="comando(1)"><i class="far fa-hand-paper text-white"></i>&nbsp;&nbsp;Detener comunicación</button>
+                </div>
+                <div class="my-2">
+                    <button type="button" class="btn btn-block btn-success btn-sm" onclick="comando(2)"><i class="fas fa-sync-alt"></i>&nbsp;&nbsp;Reiniciar comunicacion</button>
+                </div>
+                <div class="my-2">
+                    <button type="button" class="btn btn-block btn-danger btn-sm" onclick="comando(3)"><i class="fas fa-power-off"></i>&nbsp;&nbsp;Reiniciar dispositivo</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <div class="d-flex flex-column mb-4 mt-2 mt-md-0">
+                <div class="my-2">
+                    <h3 class="form-signin-heading text-center">Envio de comandos</h3>
+                </div>
+                <div class="mt-md-3">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend ">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Comando: </span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  id="comando" autofocus>
+                    </div>
+                </div>
+                <div class="text-center text-md-right">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="comando(0)"><i class="fas fa-play-circle"></i>&nbsp;&nbsp;Enviar comando</button>
+                </div>
+                <div class="mt-4">
+                    <div class="text-center">Respuesta de dispositivo</div>
+                    <textarea class="form-control " rows="5" id="respuesta"></textarea>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    function comando(data) { //funcion test
+        ip = document.getElementById('select').value;
+        if(ip != '#'){
+            if(data == 0){
+                queryObj = { ip: ip,
+                             comando: document.getElementById('comando').value };
+            }
+            if(data == 1){
+                queryObj = { ip: ip,
+                             comando: 'sudo killall python3' };
+            }
+            if(data == 2){
+                queryObj = { ip: ip,
+                             comando: 'reinicio' };
+            }
+            if(data == 3){
+                queryObj = { ip: ip,
+                             comando: 'sudo reboot' };
+            }
+            axios.post('/paramiko', queryObj).then(
+            (response) => {
+                var result = response.data;
+                console.log(result);
+                document.getElementById('respuesta').innerText= result;
+                if(result == 'ok'){
+                    Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Dispositivo reiniciado',
+                            showConfirmButton: false,
+                            timer: 1250,
+                        });
+                }
+            },
+            (error) => {
+
+                Swal.fire({
+                icon: 'error',
+                title:  'Ocurrio un error',
+                //text: '',
+                });
+                console.log(error);
+                }
+            );
+        }
+        else{
+            error('Selecciona un dispositivo');
+        }
+    }
+
+    function equipo(item){
+        console.log(item.value);
+        if(item.value != '#'){
+            document.getElementById('ip_ssh').value = 'IP:   '+item.value;
+        }
+        else{
+            document.getElementById('ip_ssh').value = '';
+        }
+    }
+
+    function error(text){
+        Swal.fire({
+                icon: 'error',
+                title:  text,
+                //text: '',
+        });
+    }
+
+</script>
+{% endblock %}

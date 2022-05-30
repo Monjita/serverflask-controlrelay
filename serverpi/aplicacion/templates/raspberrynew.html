@@ -67,13 +67,10 @@
             <div class="d-flex ">
               <div class=""><label>Cambiar IP y puerto</label></div>
               <div class="ml-4">
-                <div class="onoffswitch">
-                  <input type="checkbox" name="{{raspberry.Nombre}}" class="onoffswitch-checkbox" id="edit_{{raspberry.Nombre}}" tabindex="0" onchange="cambio_ip(this)">
-                  <label class="onoffswitch-label" for="edit_{{raspberry.Nombre}}">
-                    <span class="onoffswitch-inner"></span>
-                    <span class="onoffswitch-switch"></span>
-                  </label>
-                </div>
+                    <label class="switch_rele">
+                      <input type="checkbox" name="{{raspberry.Nombre}}" class="onoffswitch-checkbox" id="edit_{{raspberry.Nombre}}" onchange="cambio_ip(this)">
+                      <span class="slider slider-primary round"></span>
+                    </label>
               </div>
             </div> 
           </div>
@@ -210,23 +207,59 @@
     document.getElementById("puerto_actual").value = document.getElementById("puerto_"+name).value;
     $('#modal_datos').modal("show");
   }
+
   function actualizar_ip(name){
-    if(document.getElementById("ip_nuevo").value != '' && document.getElementById("puerto_nuevo").value != ''){
+    let act = 0;
+    if(document.getElementById("ip_nuevo").value == '' && document.getElementById("puerto_nuevo").value == ''){
+      error('Llena todos los campos');
+      act = 1;
+    }
+    if(document.getElementById("ip_nuevo").value == '' && document.getElementById("puerto_nuevo").value != ''){
       queryObj = { codigo: 'ip',
+                   nombre: name,
+                   ip_a: document.getElementById("ip_actual").value,
+                   puerto_a: document.getElementById("puerto_actual").value,
+                   ip_n: document.getElementById("ip_actual").value,
+                   puerto_n: document.getElementById("puerto_nuevo").value };
+    act = 0;
+    }
+
+    if(document.getElementById("ip_nuevo").value != '' && document.getElementById("puerto_nuevo").value == ''){
+      error('Lllena todos los campos');
+      act = 1;
+    }
+
+    if(document.getElementById("ip_nuevo").value != '' && document.getElementById("puerto_nuevo").value != ''){
+      var object = document.getElementById("ip_nuevo");
+      var valueForm = object.value.split("\n"); // generamos un array de valores separado por el salto de linea
+      var isValid = valueForm.every(validateIp); // validamos que todos los elementos cumplan con la condición dada en validateIp
+      if (isValid) {
+        act = 0;
+        queryObj = { codigo: 'ip',
                    nombre: name,
                    ip_a: document.getElementById("ip_actual").value,
                    puerto_a: document.getElementById("puerto_actual").value,
                    ip_n: document.getElementById("ip_nuevo").value,
                    puerto_n: document.getElementById("puerto_nuevo").value };
-      //console.log(queryObj);
+        }
+      else{
+        error('Ingresa una dirección IP valida');
+        act = 1;
+      }
+    }
+
+    if(act == 0){
       document.getElementById("proceso").style.display = 'block';
       axios.post('/actualizar_parametros', queryObj).then(
           (response) => {
              var result = response.data;
-              //console.log(response.data.estatus)
-              if(result .estatus == 'ok'){
-               //console.log('cambio realizado');
-                document.getElementById("ip_"+name).value = document.getElementById("ip_nuevo").value;
+            if(result .estatus == 'ok'){
+               if(document.getElementById("ip_nuevo").value != ''){
+                  document.getElementById("ip_"+name).value = document.getElementById("ip_nuevo").value;
+               }
+               else{
+                document.getElementById("ip_"+name).value = document.getElementById("ip_actual").value;
+               }
                 document.getElementById("puerto_"+name).value = document.getElementById("puerto_nuevo").value;
                 document.getElementById("proceso").style.display = "none";
                 Swal.fire({
@@ -237,6 +270,10 @@
                   timer: 1000,
                 });
                 $('#modal_datos').modal('hide');
+              }
+              if(result.estatus == 'error'){
+                document.getElementById("proceso").style.display = "none";
+                error('La dirección IP ya esta en uso')
               }
           },
           (error) => {
@@ -251,6 +288,35 @@
       );
     }
   }
+
+  function validateIp(ip) {
+  var patronIp = new RegExp(
+    "^([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})$"
+  );
+  var valores;
+
+  // early return si la ip no tiene el formato correcto.
+  if (ip.search(patronIp) !== 0) {
+    return false;
+  }
+
+  valores = ip.split(".");
+
+  return (
+    valores[0] <= 255 &&
+    valores[1] <= 255 &&
+    valores[2] <= 255 &&
+    valores[3] <= 255
+  );
+}
+
+function error(text){
+        Swal.fire({
+                icon: 'error',
+                title:  text,
+                //text: '',
+        });
+    }
 </script>
 
 {% endblock %}

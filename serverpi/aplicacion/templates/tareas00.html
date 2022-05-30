@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Tareas{% endblock %}
+{% block contenido %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 pt-md-5 mt-md-4">
+        {{reles}}
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <div class="d-flex flex-column mb-4 mt-2 mt-md-0">
+                <div class="my-2">
+                    <h3 class="form-signin-heading text-center">TAREAS PROGRAMADAS</h3>
+                </div>
+                <div class="my-2">
+                    <h5 class="form-signin-heading text-center">Dispositivo: <span class="text-danger">{{raspberry.Nombre}}</span></h5>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <div class="col-8 input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">Fecha:</span>
+                        </div>
+                        <input type="date"  id="fecha"class="form-control" aria-label="Small"  name="fecha" placeholder="Fecha" aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">Hora:</span>
+                        </div>
+                        <input type="number"  id="hora"class="form-control" aria-label="Small"  name="hora" placeholder="Hora" aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                    <div class="mx-4"></div>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">Minuto:</span>
+                        </div>
+                        <input type="number"  id="minuto"class="form-control" aria-label="Small"  name="minuto" placeholder="Minuto" aria-describedby="inputGroup-sizing-sm">
+                      </div>
+                </div>
+                <div class="d-flex flex-row">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">Acción:</span>
+                        </div>
+                        <div class="ml-2" style="margin-top: 10px;">
+                            <label class="switch_rele">
+                                <input type="checkbox" id="accion">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    
+
+</script>
+{% endblock %}

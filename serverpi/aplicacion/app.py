@@ -1,4 +1,5 @@
 from operator import eq
+from typing import final
 from flask import Flask, render_template, redirect, url_for, jsonify, request, abort,\
     session
     
@@ -7,7 +8,7 @@ from flask_cors import CORS
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from aplicacion import config
-from aplicacion.forms import FormEquipo, FormCategoria, FormArticulo, FormSINO, LoginForm,\
+from aplicacion.forms import FormEquipo, FormSINO, LoginForm,\
     FormUsuario, FormChangePassword
 from werkzeug.utils import secure_filename
 from flask_login import LoginManager, login_user, logout_user, login_required,\
@@ -25,8 +26,6 @@ login_manager.login_view = "login"
 
 @app.route('/test', methods =['POST'])
 def test():
-    
-    #s.sendall(request.json['name'].encode())
     import socket
     import json   
     import sys
@@ -72,7 +71,151 @@ def test():
 def index():
     return render_template('index.html')
 
-#cambio rele manual
+# Comandos
+@app.route('/comandos')
+@login_required
+def comandos():
+    from aplicacion.models import Equipo
+    equipos = Equipo.query.all()
+    return render_template('comandos.html', equipos=equipos)
+
+#Cliente SSH desde front
+@app.route('/paramiko', methods=['POST'])
+@login_required
+def paramiko():
+    import paramiko
+    #from aplicacion.models import Equipo
+    import json
+    
+    #raspberry = Equipo.query.filter_by(IP=request.json['ip'])
+    
+    # Inicia un cliente SSH
+    ssh_client = paramiko.SSHClient()
+    # Establecer política por defecto para localizar la llave del host localmente
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    # Conectarse, cambiar credebciales por raspberry correcta
+    ssh_client.connect(request.json['ip'], 22, 'pi', 'zero123')
+    comando = request.json['comando']
+    # Ejecutar un comando de forma remota capturando entrada, salida y error estándar
+    if comando == 'reinicio':
+        msg = 'sudo nohup /home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/menu_4.py &'
+        entrada, salida, error = ssh_client.exec_command(msg)
+        ssh_client.close()
+        return 'Comunicación reiniciada'
+    elif comando == 'detener':
+        msg = 'sudo killall python3'
+        entrada, salida, error = ssh_client.exec_command(msg)
+        ssh_client.close()
+        return 'Comunicación detenida'
+    else:
+        # Mostrar la salida estándar en pantalla
+        entrada, salida, error = ssh_client.exec_command(comando)
+        dato = salida.read()
+        print(dato)
+        # Cerrar la conexión
+        ssh_client.close()
+    if request.json['comando'] == 'reboot':
+        return 'ok'
+    return format(dato)
+
+#Tareas programadas test
+@app.route('/tareas_test', methods=['GET','POST'])
+@login_required
+def tareas_test():
+    return render_template("tareas.html")
+
+#Tareas programadas
+@app.route('/tareas/<id>', methods=['GET','POST'])
+@login_required
+def tareas(id):
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    raspberry = Equipo.query.filter_by(id=id).first()
+    dato = None
+    if raspberry is None:
+        return render_template("acciones.html")
+    else:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            msg = {'codigo': 'estatus_relay'}
+            #data = json.dumps(msg)
+            message = json.dumps(msg)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            data = sock.recv(1024)
+            data = data.decode("utf-8")
+            dato = json.loads(data)
+            if data == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+            return render_template('tareas.html', raspberry = raspberry, reles = dato)
+        
+        return render_template("acciones.html")
+    
+#Polaridad relevadores -----------------
+@app.route('/polaridad', methods=['GET','POST'])
+@login_required
+def polaridad():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        raspberry.Polaridad_rele = request.json['check']
+        db.session.commit()
+        #agregar retorno de validacion, y cambio de polaridad real
+
+@app.route('/acciones_all', methods=['GET', 'POST'])
+@login_required
+def acciones_all():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato  = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato 
+
+#Cambio de Polaridad por relevador
+@app.route('/polaridad_rele', methods=['GET', 'POST'])
+@login_required
+def polaridad_rele():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato
+
+    
+#Cambio rele manual
 @app.route('/change_relay', methods=['POST'])
 @login_required
 def change_relay():
@@ -98,9 +241,8 @@ def change_relay():
     return dato
 
 #Modal datos reles
-
-@app.route('/reles', methods=['POST'])
-@login_required
+@app.route('/reles', methods=['GET', 'POST'])
+# @login_required
 def reles():
     from aplicacion.models import Equipo
     import json
@@ -124,7 +266,6 @@ def reles():
     return dato
 
 #Editar relevadores
-
 @app.route('/reles/editar', methods=["get", "post"])
 @login_required
 def editarreles():
@@ -143,7 +284,7 @@ def editarreles():
             dato = sock.recv(1024)
             #data = data.decode("utf-8")
             #dato = json.loads(data)
-            if dato == 'ok':
+            if dato == 'ok' or dato == 'error':
                 sock.sendall('')
         finally:
             sock.close()
@@ -204,6 +345,8 @@ def actualizar_parametros():
             rasp.Puerto = puerto_n
             db.session.commit()
         #print('connecting to {} port {}'.format(*server_address))
+    else: 
+        dato = 'error'
     return jsonify({"estatus" : format(dato) })
     #return jsonify({"codigo" : request.json['codigo']
      #               ,"ip actual" : request.json['ip_a'],
@@ -298,161 +441,161 @@ def raspberrydelete(id):
 
 ###########################################################
 
-@app.route('/categoria')
-@app.route('/categoria/<id>')
-@login_required
-def inicio(id='0'):
-    from aplicacion.models import Articulos, Categorias
-    categoria = Categorias.query.get(id)
-    if id == '0':
-        articulos = Articulos.query.all()
-    else:
-        articulos = Articulos.query.filter_by(CategoriaId=id)
-    categorias = Categorias.query.all()
-    return render_template("inicio.html", articulos=articulos,
-                           categorias=categorias, categoria=categoria)
+# @app.route('/categoria')
+# @app.route('/categoria/<id>')
+# @login_required
+# def inicio(id='0'):
+#     from aplicacion.models import Articulos, Categorias
+#     categoria = Categorias.query.get(id)
+#     if id == '0':
+#         articulos = Articulos.query.all()
+#     else:
+#         articulos = Articulos.query.filter_by(CategoriaId=id)
+#     categorias = Categorias.query.all()
+#     return render_template("inicio.html", articulos=articulos,
+#                            categorias=categorias, categoria=categoria)
 
 
-@app.route('/categorias')
-@login_required
-def categorias():
-    from aplicacion.models import Categorias
-    categorias = Categorias.query.all()
-    return render_template("categorias.html", categorias=categorias)
+# @app.route('/categorias')
+# @login_required
+# def categorias():
+#     from aplicacion.models import Categorias
+#     categorias = Categorias.query.all()
+#     return render_template("categorias.html", categorias=categorias)
 
 
-@app.route('/categorias/new', methods=["get", "post"])
-@login_required
-def categorias_new():
-    from aplicacion.models import Categorias
-    # Control de permisos
-    if not current_user.is_admin():
-        abort(404)
-    form = FormCategoria(request.form)
-    if form.validate_on_submit():
-        cat = Categorias(nombre=form.nombre.data)
-        db.session.add(cat)
-        db.session.commit()
-        return redirect(url_for("categorias"))
-    else:
-        return render_template("categorias_new.html", form=form)
+# @app.route('/categorias/new', methods=["get", "post"])
+# @login_required
+# def categorias_new():
+#     from aplicacion.models import Categorias
+#     # Control de permisos
+#     if not current_user.is_admin():
+#         abort(404)
+#     form = FormCategoria(request.form)
+#     if form.validate_on_submit():
+#         cat = Categorias(nombre=form.nombre.data)
+#         db.session.add(cat)
+#         db.session.commit()
+#         return redirect(url_for("categorias"))
+#     else:
+#         return render_template("categorias_new.html", form=form)
 
 
-@app.route('/categorias/<id>/edit', methods=["get", "post"])
-@login_required
-def categorias_edit(id):
-    from aplicacion.models import Categorias
-    # Control de permisos
-    if not current_user.is_admin():
-        abort(404)
-    cat = Categorias.query.get(id)
-    if cat is None:
-        abort(404)
-    form = FormCategoria(request.form, obj=cat)
-    if form.validate_on_submit():
-        form.populate_obj(cat)
-        db.session.commit()
-        return redirect(url_for("categorias"))
-    return render_template("categorias_new.html", form=form)
+# @app.route('/categorias/<id>/edit', methods=["get", "post"])
+# @login_required
+# def categorias_edit(id):
+#     from aplicacion.models import Categorias
+#     # Control de permisos
+#     if not current_user.is_admin():
+#         abort(404)
+#     cat = Categorias.query.get(id)
+#     if cat is None:
+#         abort(404)
+#     form = FormCategoria(request.form, obj=cat)
+#     if form.validate_on_submit():
+#         form.populate_obj(cat)
+#         db.session.commit()
+#         return redirect(url_for("categorias"))
+#     return render_template("categorias_new.html", form=form)
 
 
-@app.route('/categorias/<id>/delete', methods=["get", "post"])
-@login_required
-def categorias_delete(id):
-    from aplicacion.models import Categorias
-    # Control de permisos
-    if not current_user.is_admin():
-        abort(404)
-    cat = Categorias.query.get(id)
-    if cat is None:
-        abort(404)
-    form = FormSINO()
-    if form.validate_on_submit():
-        if form.si.data:
-            db.session.delete(cat)
-            db.session.commit()
-        return redirect(url_for("categorias"))
-    return render_template("categorias_delete.html", form=form, cat=cat)
+# @app.route('/categorias/<id>/delete', methods=["get", "post"])
+# @login_required
+# def categorias_delete(id):
+#     from aplicacion.models import Categorias
+#     # Control de permisos
+#     if not current_user.is_admin():
+#         abort(404)
+#     cat = Categorias.query.get(id)
+#     if cat is None:
+#         abort(404)
+#     form = FormSINO()
+#     if form.validate_on_submit():
+#         if form.si.data:
+#             db.session.delete(cat)
+#             db.session.commit()
+#         return redirect(url_for("categorias"))
+#     return render_template("categorias_delete.html", form=form, cat=cat)
 
 
-@app.route('/articulos/new', methods=["get", "post"])
-@login_required
-def articulos_new():
-    from aplicacion.models import Articulos, Categorias
-    # Control de permisos
-    if not current_user.is_admin():
-        abort(404)
-    form = FormArticulo()
-    categorias = [(c.id, c.nombre) for c in Categorias.query.all()[1:]]
-    form.CategoriaId.choices = categorias
-    if form.validate_on_submit():
-        try:
-            f = form.photo.data
-            nombre_fichero = secure_filename(f.filename)
-            f.save(app.root_path + "/static/upload/" + nombre_fichero)
-        except:
-            nombre_fichero = ""
-        art = Articulos()
-        form.populate_obj(art)
-        art.image = nombre_fichero
-        db.session.add(art)
-        db.session.commit()
-        return redirect(url_for("inicio"))
-    else:
-        return render_template("articulos_new.html", form=form)
+# @app.route('/articulos/new', methods=["get", "post"])
+# @login_required
+# def articulos_new():
+#     from aplicacion.models import Articulos, Categorias
+#     # Control de permisos
+#     if not current_user.is_admin():
+#         abort(404)
+#     form = FormArticulo()
+#     categorias = [(c.id, c.nombre) for c in Categorias.query.all()[1:]]
+#     form.CategoriaId.choices = categorias
+#     if form.validate_on_submit():
+#         try:
+#             f = form.photo.data
+#             nombre_fichero = secure_filename(f.filename)
+#             f.save(app.root_path + "/static/upload/" + nombre_fichero)
+#         except:
+#             nombre_fichero = ""
+#         art = Articulos()
+#         form.populate_obj(art)
+#         art.image = nombre_fichero
+#         db.session.add(art)
+#         db.session.commit()
+#         return redirect(url_for("inicio"))
+#     else:
+#         return render_template("articulos_new.html", form=form)
 
 
-@app.route('/articulos/<id>/edit', methods=["get", "post"])
-@login_required
-def articulos_edit(id):
-    from aplicacion.models import Articulos, Categorias
-    # Control de permisos
-    if not current_user.is_admin():
-        abort(404)
-    art = Articulos.query.get(id)
-    if art is None:
-        abort(404)
-    form = FormArticulo(obj=art)
-    categorias = [(c.id, c.nombre) for c in Categorias.query.all()[1:]]
-    form.CategoriaId.choices = categorias
-    if form.validate_on_submit():
-        # Borramos la imagen anterior si hemos subido una nueva
-        if form.photo.data:
-            os.remove(app.root_path + "/static/upload/" + art.image)
-            try:
-                f = form.photo.data
-                nombre_fichero = secure_filename(f.filename)
-                f.save(app.root_path + "/static/upload/" + nombre_fichero)
-            except:
-                nombre_fichero = ""
-        else:
-            nombre_fichero = art.image
-        form.populate_obj(art)
-        art.image = nombre_fichero
-        db.session.commit()
-        return redirect(url_for("inicio"))
-    return render_template("articulos_new.html", form=form)
+# @app.route('/articulos/<id>/edit', methods=["get", "post"])
+# @login_required
+# def articulos_edit(id):
+#     from aplicacion.models import Articulos, Categorias
+#     # Control de permisos
+#     if not current_user.is_admin():
+#         abort(404)
+#     art = Articulos.query.get(id)
+#     if art is None:
+#         abort(404)
+#     form = FormArticulo(obj=art)
+#     categorias = [(c.id, c.nombre) for c in Categorias.query.all()[1:]]
+#     form.CategoriaId.choices = categorias
+#     if form.validate_on_submit():
+#         # Borramos la imagen anterior si hemos subido una nueva
+#         if form.photo.data:
+#             os.remove(app.root_path + "/static/upload/" + art.image)
+#             try:
+#                 f = form.photo.data
+#                 nombre_fichero = secure_filename(f.filename)
+#                 f.save(app.root_path + "/static/upload/" + nombre_fichero)
+#             except:
+#                 nombre_fichero = ""
+#         else:
+#             nombre_fichero = art.image
+#         form.populate_obj(art)
+#         art.image = nombre_fichero
+#         db.session.commit()
+#         return redirect(url_for("inicio"))
+#     return render_template("articulos_new.html", form=form)
 
 
-@app.route('/articulos/<id>/delete', methods=["get", "post"])
-@login_required
-def articulos_delete(id):
-    from aplicacion.models import Articulos
-    # Control de permisos
-    if not current_user.is_admin():
-        abort(404)
-    art = Articulos.query.get(id)
-    if art is None:
-        abort(404)
-    form = FormSINO()
-    if form.validate_on_submit():
-        if form.si.data:
-            if art.image != "":
-                os.remove(app.root_path + "/static/upload/" + art.image)
-            db.session.delete(art)
-            db.session.commit()
-        return redirect(url_for("inicio"))
-    return render_template("articulos_delete.html", form=form, art=art)
+# @app.route('/articulos/<id>/delete', methods=["get", "post"])
+# @login_required
+# def articulos_delete(id):
+#     from aplicacion.models import Articulos
+#     # Control de permisos
+#     if not current_user.is_admin():
+#         abort(404)
+#     art = Articulos.query.get(id)
+#     if art is None:
+#         abort(404)
+#     form = FormSINO()
+#     if form.validate_on_submit():
+#         if form.si.data:
+#             if art.image != "":
+#                 os.remove(app.root_path + "/static/upload/" + art.image)
+#             db.session.delete(art)
+#             db.session.commit()
+#         return redirect(url_for("inicio"))
+#     return render_template("articulos_delete.html", form=form, art=art)
 
 
 @app.route('/login', methods=['get', 'post'])
