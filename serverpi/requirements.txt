@@ -11,3 +11,4 @@ Jinja2
 SQLAlchemy
 uWSGI
 paramiko
+WTForms==2.3.3

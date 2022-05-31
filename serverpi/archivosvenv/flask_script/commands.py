@@ -371,7 +371,7 @@ class Server(Command):
 
     help = description = 'Runs the Flask development server i.e. app.run()'
 
-    def __init__(self, host='0.0.0.0', port=5000, use_debugger=None,
+    def __init__(self, host='0.0.0.0', port=8080, use_debugger=None,
                  use_reloader=None, threaded=True, processes=1,
                  passthrough_errors=False, ssl_crt=None, ssl_key=None, **options):
 
