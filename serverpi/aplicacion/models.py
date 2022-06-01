@@ -27,6 +27,15 @@ class Equipo(db.Model):
     Descripcion = Column(String(100))
     def __repr__(self):
         return (u'<{self.__class__.__name__}: {self.id}>'.format(self=self))
+    
+    def to_dict(self):
+        return {
+            'ID': self.id,
+            'Nombre': self.Nombre,
+            'IP': self.IP,
+            'Polaridad': self.Polaridad_rele,
+            'Descripcion': self.Descripcion,
+        }
 
 class Equipo_ok(db.Model):
     """Raspberry pi existentes"""

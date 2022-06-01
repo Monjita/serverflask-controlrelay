@@ -177,3 +177,68 @@
             button.invertir:active {
                 outline: none;
             }
+
+            .floating {
+                position: relative;
+                /* padding: 20px 0; */
+                /* padding: 0px; */
+                width: 100%;
+                margin-bottom: 0px;
+                /* margin-top: 0px; */
+            }
+            
+            
+            .floating>span {
+                color: #989898;
+                text-align: center;
+                width: 100%;
+                font-size: 14px;
+                position: absolute;
+                font-weight: normal;
+                pointer-events: none;
+                top: -3px;
+                transform: translateY(8px);
+                transition: all .3s linear;
+                left: 0px;
+            }
+
+            .floating>input:valid,
+            .floating>input:focus {
+                /* border-bottom-color: var(--main-color); */
+                outline: none;
+            }
+
+            /* .floating>input:placeholder-shown + span, */
+            .floating>input:disabled + span,
+            .floating>input:valid + span,
+            .floating>input:focus + span,
+            .floating>label + span,
+            .floating>select + span {
+                /* color: var(--main-color); */
+                width: 100%;
+                font-size: 10px;
+                /* position y z-index cuando el input tiene un icono */
+                position: absolute;
+                z-index: 3;
+                color: #0275d8;
+                font-weight: bold;
+                transform: translateY(-13px);
+                /* transform: translate(0%,-80%) scale(0.80); */
+            }
+
+            .floating2>input:not(valid) + span,{
+                /* color: var(--main-color); */
+                width: 100%;
+                font-size: 10px;
+                color: #0275d8;
+                transform: translateY(-11px);
+                /* transform: translate(5%,-85%) scale(0.80); */
+            }   
+
+            .form-control-xs {
+                height: calc(1em + .375rem + 5px) !important;
+                padding: .125rem .25rem !important;
+                font-size: .75rem !important;
+                line-height: 1.5;
+                border-radius: .2rem;
+            }

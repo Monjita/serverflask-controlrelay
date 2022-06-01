@@ -22,25 +22,38 @@
         <div class="tab-content w-100" id="pills-tabContent" role="tabpanel">
             <div id="tareas1" class="tab-pane fade show active" >
                 <div class="d-flex flex-column">
-                    <div class="my-2">
+                    <div class="my-2 ml-4">
                         <button class="btn btn-sm btn-primary">Nueva tarea</button>
                     </div>
                     
-                    <div class="d-flex flex-row mt-2">
+                    <div class="d-flex flex-row mt-4">
 
                         <div class="d-flex flex-row col-9">
-                            <select class="form-control form-control-sm" id="pin_tarea_programada">
+                            <!-- <select class="form-control form-control-sm" id="pin_tarea_programada">
                                 <option hidden disabled selected>Elige un Pin</option>
                                 <option>5</option>
-                            </select>
-                            <input class="form-control form-control-sm mx-2" placeholder="Nombre de la tarea" id="nombre_tarea_programada">
-                            <input type="text" id="hora_programada" class="timepicker form-control form-control-sm text-center"  autocomplete="off" placeholder="Selecciona la hora">
+                            </select> -->
+                            <div class="floating mx-2">
+                                <select class="form-control form-control-sm text-center" id="pin_tarea">
+                                    <option hidden disabled selected>Elige un Pin</option>
+                                    <option>5</option>
+                                </select>
+                                <span >Pin del Relevador</span>
+                            </div>
+                            <div class="floating mx-2">
+                                <input class="form-control form-control-sm" id="nombre_tarea" required>
+                                <span >Nombre de la tarea</span>
+                            </div>
+                            <div class="floating mx-2">
+                                <input type="text" id="hora_programada" class="timepicker form-control form-control-sm text-center"  autocomplete="off"required>
+                                <span >Hora de ejecución</span>
+                            </div>
                         </div>
 
-                        <div class="d-flex justify-content-between col-3">
+                        <div class="d-flex justify-content-start col-3">
 
-                            <div class="d-flex">
-                                <div class="mx-2 font-weight-bold">
+                            <div class="d-flex mr-5">
+                                <!-- <div class="mx-2 font-weight-bold">
                                     Estatus:
                                 </div>
                                 <div class="" style="position: relative; margin-top: 5px;">
@@ -48,16 +61,28 @@
                                         <input type="checkbox">
                                         <span class="slider round"></span>
                                     </label>
+                                </div> -->
+                                <div class="floating">
+                                    <label class="switch_rele" style="position: relative; margin-top: 7px; margin-left: 3px;">
+                                        <input type="checkbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span >Estatus</span>
                                 </div>
                             </div>
 
                             <div class="d-flex">
-                                <div class="ml-2 font-weight-bold">
+                                <!-- <div class="ml-2 font-weight-bold">
                                     Polaridad:
                                 </div>
                                 <div class="" style="position: relative; margin-top: 0px;">
                                     <button onclick="polaridad(this)" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="far fa-circle"></i></button>
                                     <input type="number" value="0" id="polaridad_nuevo" style="display: none;">
+                                </div> -->
+                                <div class="floating" style="width: 100px;">
+                                    <button onclick="polaridad(this)" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;margin-top: 3px; margin-left: 8px;"><i class="far fa-circle"></i></button>
+                                    <input type="number" value="0" id="polaridad_nuevo" style="display: none;">
+                                    <span id="tipo_polaridad" style="margin-left: -25px;">Polaridad normal</span>
                                 </div>
                             </div>
 
@@ -65,8 +90,8 @@
 
                     </div>
 
-                    <div class="d-flex justify-content-center mt-3 ml-3">
-
+                    <div class="d-flex justify-content-center mt-3">
+                        <div class="col-9 ml-3">
                         <table class="table table-sm m-0 p-0">
                             <tr>
                                 <th>
@@ -160,49 +185,24 @@
                                         </div>
                                     </div>
                                 </th>
-                                <th>
-                                    <div class="d-flex justify-content-center">
-                                        <button class="btn btn-sm btn-success" style="margin-top: -7px;">Añadir Tarea</button>
-                                    </div>
-                                </th>
                             </tr>
                         </table>
-                        
+                        </div>
+                        <div class="col-3 justify-content-center">
+                            <button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: -3px; margin-left: 3px;">Añadir Tarea</button>
+                        </div>
                     </div>
-
-                    <!-- <div class="d-flex flex-row">
-                        <div class="d-flex">
-                            <div class="mx-2 font-weight-bold">
-                                Estatus:
-                            </div>
-                            <div class="" style="margin-top: 0px;">
-                                <label class="switch_rele">
-                                    <input type="checkbox" >
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="ml-2 font-weight-bold">
-                                Polaridad:
-                            </div>
-                            <button onclick="polaridad()" value="0" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="far fa-circle" style="padding-top: 0px;"></i></button>
-                        </div>
-                        <div class="d-flex">
-                            <button class="btn btn-sm btn-success">Añadir Tarea</button>
-                        </div>
-                    </div> -->
-
                 </div>
 
-                <div class="d-flex mt-3 justify-content-center w-100">
-                    <table class="table table-sm" id="tareas" width="100%">
+                <div class="d-flex mt-3 justify-content-center ">
+                    <table class="table table-sm" id="tareas" >
                         <thead>
                             <tr>
-                                <th>Pin</th>
-                                <th>Estatus actual</th>
+                                <th>Nombre</th>
+                                <th>IP</th>
                                 <!-- <th>Nuevo estatus</th> -->
-                                <th>Hora Programada</th>
+                                <th>Polaridad</th>
+                                <th>Descripcion</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -237,27 +237,43 @@
         if(document.getElementById("polaridad_nuevo").value == 0){
             item.innerHTML = '<i class="fas fa-circle"></i>';
             document.getElementById("polaridad_nuevo").value = 1;
+            document.getElementById("tipo_polaridad").innerText = 'Polaridad invertida';
         }
         else{
             document.getElementById("polaridad_nuevo").value = 0;
             item.innerHTML = '<i class="far fa-circle"></i>';
+            document.getElementById("tipo_polaridad").innerText = 'Polaridad normal';
         }
     }
 
     $(function (){
-		tableitems = $('#tareas').DataTable({
-	        info:false,
-	        ordering:true,
-	        paging:false,
-	        destroy: true,
-	        searching:false,
-	        responsive: true,
-	        columns: [
-				{ data:'Pin'},
-				{ data:'Estatus actual'},
-	        	{ data:'Hora programada'},
-			],
-		});
+		// tableitems = $('#tareas').DataTable({
+	    //     info:false,
+	    //     ordering:true,
+	    //     paging:false,
+	    //     destroy: true,
+	    //     searching:false,
+	    //     responsive: true,
+	    //     columns: [
+		// 		{ data:'Pin'},
+		// 		{ data:'Estatus actual'},
+	    //     	{ data:'Hora programada'},
+		// 	],
+		// });
+        $('#tareas').DataTable({
+            ajax: '/api/data',
+            columns: [
+              { data: 'Nombre',
+              render: function (data, type, row) {
+                return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
+            },
+               },
+              {data: 'IP', searchable: false},
+              {data: 'Polaridad', orderable: false, searchable: false},
+              {data: 'Descripcion', orderable: false, searchable: false},
+            ],
+            
+          });
     });
 
     

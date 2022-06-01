@@ -12,7 +12,7 @@ os.chdir( path )
 
 # os.system('~/serverpi/serverpienv/bin/uwsgi --virtualenv /home/servidor/serverpi/serverpienv/ --socket 0.0.0.0:8080 --protocol=http --enable-threads --processes 5 --threads 3 --wsgi-file wsgi.py --callable app')
 
-os.system('~/repos/serverpienv/bin/uwsgi --virtualenv /home/monjita/repos/serverpienv/ --socket 0.0.0.0:8080 --protocol=http --enable-threads --processes 5 --threads 3 --wsgi-file wsgi.py --callable app')
+os.system('~/repos/serverpienv/bin/uwsgi --virtualenv /home/monjita/repos/serverpienv/ --socket 0.0.0.0:8080 --protocol=http  --enable-threads --processes 5 --threads 3 --wsgi-file wsgi.py --callable app')
 
 
 

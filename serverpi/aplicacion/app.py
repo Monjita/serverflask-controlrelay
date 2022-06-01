@@ -124,6 +124,11 @@ def paramiko():
 def tareas_test():
     return render_template("tareas.html")
 
+@app.route('/api/data', methods=['GET','POST'])
+def data():
+    from aplicacion.models import Equipo
+    return {'data': [Equipo.to_dict() for Equipo in Equipo.query]}
+
 #Tareas programadas
 @app.route('/tareas/<id>', methods=['GET','POST'])
 @login_required
