@@ -1,17 +1,15 @@
-{% extends "base.html" %}
-{% block title %}Tareas{% endblock %}
-{% block contenido %}
+{% extends "base.html" %} {% block title %}Tareas{% endblock %} {% block contenido %}
 <div class="container">
     <div class="row d-flex justify-content-center ">
         <div class="my-2">
-         PENDIENTE OBTENER DATOS DE LOS RELEVADORES
+            PENDIENTE OBTENER DATOS DE LOS RELEVADORES
             <!-- <h5 class="form-signin-heading">Dispositivo: <span class="text-danger"></span></h5> -->
         </div>
     </div>
     <div class="row d-flex justify-content-center mt-2">
         <ul class="nav nav-pills " id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active text-sm" href="#tareas1" data-toggle="tab" role="tab" id="tab_tareas1" aria-selected="true" >Tareas semanales</a>
+                <a class="nav-link active text-sm" href="#tareas1" data-toggle="tab" role="tab" id="tab_tareas1" aria-selected="true">Tareas semanales</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-sm" href="#tareas2" data-toggle="tab" role="tab" id="tab_tareas2" aria-selected="false">Tareas independientes</a>
@@ -20,178 +18,179 @@
     </div>
     <div class="row d-flex justify-content-center mt-4">
         <div class="tab-content w-100" id="pills-tabContent" role="tabpanel">
-            <div id="tareas1" class="tab-pane fade show active" >
+            <div id="tareas1" class="tab-pane fade show active">
                 <div class="d-flex flex-column">
                     <div class="my-2 ml-4">
                         <button class="btn btn-sm btn-primary" onclick="nueva_tarea()">Nueva tarea</button>
                     </div>
                     <div id="form_tarea" style="display: none;">
-                    <div class="d-flex flex-row mt-4">
+                        <div class="d-flex flex-row mt-4">
 
-                        <div class="d-flex flex-row col-9">
-                            <div class="floating mx-2">
-                                <select class="form-control form-control-sm text-center" id="pin_semanal">
-                                    <option hidden disabled selected value="#">Elige un Pin</option>
-                                    <option>5</option>
-                                </select>
-                                <span >Pin del Relevador</span>
-                            </div>
-                            <div class="floating mx-2">
-                                <input class="form-control form-control-sm" id="nombre_semanal" required>
-                                <span >Nombre de la tarea</span>
-                            </div>
-                            <div class="floating mx-2">
-                                <input type="text" id="hora_semanal" class="timepicker form-control form-control-sm text-center"  autocomplete="off"required>
-                                <span >Hora de ejecución</span>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-start col-3">
-
-                            <div class="d-flex mr-5">
-                                <div class="floating">
-                                    <label class="switch_rele" style="position: relative; margin-top: 7px; margin-left: 3px;">
-                                        <input type="checkbox" id="estatus_semanal">
-                                        <span class="slider round"></span>
-                                    </label>
-                                    <span >Estatus</span>
+                            <div class="d-flex flex-row col-9">
+                                <div class="floating mx-2">
+                                    <select class="form-control form-control-sm text-center" id="pin_semanal">
+                                        <option hidden disabled selected value="#">Elige un Pin</option>
+                                        <option>5</option>
+                                    </select>
+                                    <span>Pin del Relevador</span>
+                                </div>
+                                <div class="floating mx-2">
+                                    <input class="form-control form-control-sm" id="nombre_semanal" required>
+                                    <span>Nombre de la tarea</span>
+                                </div>
+                                <div class="floating mx-2">
+                                    <input type="text" id="hora_semanal" class="timepicker form-control form-control-sm text-center" autocomplete="off" required>
+                                    <span>Hora de ejecución</span>
                                 </div>
                             </div>
 
-                            <div class="d-flex">
-                                <div class="floating" style="width: 100px;">
-                                    <button onclick="polaridad(this)" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;margin-top: 3px; margin-left: 8px;"><i class="far fa-circle"></i></button>
-                                    <input type="number" value="0" id="polaridad_semanal" style="display: none;">
-                                    <span id="tipo_polaridad" style="margin-left: -25px;">Logica normal</span>
+                            <div class="d-flex justify-content-start col-3">
+
+                                <div class="d-flex mr-5">
+                                    <div class="floating">
+                                        <label class="switch_rele" style="position: relative; margin-top: 7px; margin-left: 3px;">
+                                            <input type="checkbox" id="estatus_semanal">
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <span>Estatus</span>
+                                    </div>
                                 </div>
+
+                                <div class="d-flex">
+                                    <div class="floating" style="width: 100px;">
+                                        <button onclick="polaridad(this)" class="invertir text-primary valor-logica" id="btn_semanal" style="border:none;background:none; cursor:pointer;margin-top: 3px; margin-left: 8px;"><i
+                                                class="far fa-circle"></i></button>
+                                        <input type="number" value="0" id="polaridad_semanal" style="display: none;">
+                                        <span id="tipo_polaridad" style="margin-left: -25px;">Logica normal</span>
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
 
-                    </div>
-
-                    <div class="d-flex justify-content-center mt-3">
-                        <div class="col-9 ml-3">
-                            <table class="table table-sm m-0 p-0">
-                                <tr>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="domingo">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
+                        <div class="d-flex justify-content-center mt-3">
+                            <div class="col-9 ml-3">
+                                <table class="table table-sm m-0 p-0">
+                                    <tr>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="domingo">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Domingo
+                                                </div>
                                             </div>
-                                            <div class="text-sm mx-2">
-                                                Domingo
+                                        </th>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="lunes">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Lunes
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="lunes">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="martes">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Martes
+                                                </div>
                                             </div>
-                                            <div class="text-sm mx-2">
-                                                Lunes
+                                        </th>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="miercoles">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Miercoles
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="martes">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="jueves">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Jueves
+                                                </div>
                                             </div>
-                                            <div class="text-sm mx-2">
-                                                Martes
+                                        </th>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="viernes">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Viernes
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="miercoles">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex">
+                                                <div class="" style="margin-top: 2px;">
+                                                    <label class="switch_rele">
+                                                        <input type="checkbox" id="sabado">
+                                                        <span class="slider slider-primary round"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="text-sm mx-2">
+                                                    Sabado
+                                                </div>
                                             </div>
-                                            <div class="text-sm mx-2">
-                                                Miercoles
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="jueves">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
-                                            </div>
-                                            <div class="text-sm mx-2">
-                                                Jueves
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="viernes">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
-                                            </div>
-                                            <div class="text-sm mx-2">
-                                                Viernes
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="d-flex">
-                                            <div class="" style="margin-top: 2px;">
-                                                <label class="switch_rele">
-                                                    <input type="checkbox" id="sabado">
-                                                    <span class="slider slider-primary round"></span>
-                                                </label>
-                                            </div>
-                                            <div class="text-sm mx-2">
-                                                Sabado
-                                            </div>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </table>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: -3px; margin-left: -23px;" onclick="cancelar_tarea()">Cancelar</button>
+                                <button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: -3px; margin-left: 5px;" onclick="add_tarea_semanal()">Crear
+                                    tarea</button>
+                            </div>
                         </div>
-                        <div class="col-3">
-                            <button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: -3px; margin-left: -23px;" onclick="cancelar_tarea()">Cancelar</button>
-                            <button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: -3px; margin-left: 5px;" onclick="add_tarea_semanal()">Crear tarea</button>
-                        </div>
-                    </div>
                     </div>
 
                 </div>
 
                 <div class="d-flex mt-3 justify-content-center ">
-                    <table class="table table-sm" id="tareas" >
+                    <table class="table table-sm" id="tareas">
                         <thead>
                             <tr>
                                 <th>Nombre de la tarea</th>
-                                <th>Dias</th>
-                                <!-- <th>Nuevo estatus</th> -->
                                 <th>Pin</th>
+                                <th>Dias</th>
                                 <th>Hora</th>
                                 <th>Estatus</th>
                                 <th>Logica</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </div>
@@ -201,7 +200,7 @@
             <div id="tareas2" class="tab-pane fade">
                 TAREAS INDEPENDIENTES
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -217,137 +216,227 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 
 <script type="text/javascript">
-
     var table;
-    $(function (){
-        $('#tareassd').DataTable({
-            ajax: '/api/data',
-            columns: [
-              { data: 'Nombre',
-              render: function (data, type, row) {
-                return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
-            },
-               },
-              {data: 'IP', searchable: false},
-              {data: 'Polaridad', orderable: false, searchable: false},
-              {data: 'Descripcion', orderable: false, searchable: false},
-            ],
-            
-          });
-          
-          table = $('#tareas').DataTable({
-            ajax: { url:'/consulta_tareas',type:'GET',data:{ ip:'192.168.100.33' } },
-            columns: [
-              { data: 'Nombre_tarea'},
-              {data:  'Dias', orderable: false, searchable: false},
-              {data: 'Pin',},
-              {data: 'Hora', orderable: false, searchable: false},
-              {data: 'Estatus', orderable: false, searchable: false},
-              {data: 'Logica', orderable: false, searchable: false},
-            ],
-            
-          });
-    });
+    $(function() {
+                $('#tareassd').DataTable({
+                    ajax: '/api/data',
+                    columns: [{
+                        data: 'Nombre',
+                        render: function(data, type, row) {
+                            return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">' + data + '</button><div class="text-primary">' + row["ID"] + '</div></div>';
+                        },
+                    }, {
+                        data: 'IP',
+                        searchable: false
+                    }, {
+                        data: 'Polaridad',
+                        orderable: false,
+                        searchable: false
+                    }, {
+                        data: 'Descripcion',
+                        orderable: false,
+                        searchable: false
+                    }, ],
 
-    function polaridad(item){
-        if(document.getElementById("polaridad_semanal").value == 0){
-            item.innerHTML = '<i class="fas fa-circle"></i>';
-            document.getElementById("polaridad_semanal").value = 1;
-            document.getElementById("tipo_polaridad").innerText = 'Logica invertida';
-        }
-        else{
-            document.getElementById("polaridad_semanal").value = 0;
-            item.innerHTML = '<i class="far fa-circle"></i>';
-            document.getElementById("tipo_polaridad").innerText = 'Logica normal';
-        }
-    }
+                });
 
-    function nueva_tarea(){
-        document.getElementById("form_tarea").style.display = 'block';
-    }
+                table = $('#tareas').DataTable({
+                        ajax: {
+                            url: '/consulta_tareas',
+                            type: 'GET',
+                            data: {
+                                ip: '192.168.100.31'
+                            }
+                        },
+                        columns: [{
+                                data: 'Nombre_tarea'
+                                },
+                                {
+                                    data: 'Pin',
+                                },
+                                {
+                                    data: 'Dias',
+                                    orderable: false,
+                                    searchable: false,
+                                    render: function(data, type, row) {
+                                        //return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
+                                        var dias = data.split(',');
+                                        console.log(dias);
+                                        var d = dias[0] == 1 ? '<span class="text-primary font-weight-bold"">D</span>' : '<span class="text-danger font-weight-bold"">D</span>';
+                                        d += dias[1] == 1 ? '<span class="text-primary font-weight-bold""> L</span>' : '<span class="text-danger font-weight-bold""> L</span>';
+                                        d += dias[2] == 1 ? '<span class="text-primary font-weight-bold""> M</span>' : '<span class="text-danger font-weight-bold""> M</span>';
+                                        d += dias[3] == 1 ? '<span class="text-primary font-weight-bold""> M</span>' : '<span class="text-danger font-weight-bold""> M</span>';
+                                        d += dias[4] == 1 ? '<span class="text-primary font-weight-bold""> J</span>' : '<span class="text-danger font-weight-bold""> J</span>';
+                                        d += dias[5] == 1 ? '<span class="text-primary font-weight-bold""> V</span>' : '<span class="text-danger font-weight-bold""> V</span>';
+                                        d += dias[6] == 1 ? '<span class="text-primary font-weight-bold""> S</span>' : '<span class="text-danger font-weight-bold""> S</span>';
 
-    function cancelar_tarea(){
-        document.getElementById("form_tarea").style.display = 'none';
-    }
+                                        return '<div class="">' + d + '</div';
+                                    },
+                                },
+                                {
+                                    data: 'Hora',
+                                },
+                                {
+                                    data: 'Estatus',
+                                    orderable: false,
+                                    searchable: false,
+                                    render: function(data, type, row) {
+                                        if (data == true) {
+                                            return '<label class="switch_rele" style="position: relative; margin-top: 5px; margin-left: 0px;">'
+                                                    +'<input type="checkbox" checked="on">'
+                                                    +'<span class="slider round"></span>'
+                                                    +'</label>';
+                                        }
+                                        else {
+                                            return '<label class="switch_rele" style="position: relative; margin-top: 5px; margin-left: 0px;">'
+                                                +'<input type="checkbox" >'
+                                                +'<span class="slider round"></span>'
+                                                +'</label>';
+                                        }
+                                    }
+                                },
+                                {
+                                    data: 'Logica',
+                                    orderable: false,
+                                    searchable: false,
+                                    render: function(data, type, row) {
+                                        if (data == true) {
+                                            return '<button class="invertir text-primary" style="border:none;background:none; cursor:pointer;margin-top: 0px; margin-left: 0px;"><i class="fas fa-circle"></i></button>';
+                                        }
+                                        else{
+                                            return '<button class="invertir text-primary" style="border:none;background:none; cursor:pointer;margin-top: 0px; margin-left: 0px;"><i class="far fa-circle"></i></button>';
+                                        }
+                                    }
+                                },
+                            ],
+                        });
+                });
 
-    function add_tarea_semanal(){
-        var ip = '192.168.100.33'; //CAMBIAR Y MANDARLO DESDE EL BACKEND 
-        var nombre_tarea = document.getElementById("nombre_semanal").value;
-        var pin = document.getElementById("pin_semanal").value;
-        var hora = document.getElementById("hora_semanal").value;
-        var estatus = document.getElementById("estatus_semanal").checked;
-        var logica = document.getElementById("polaridad_semanal").value;
-
-        var domingo = document.getElementById("domingo").checked;
-        var lunes = document.getElementById("lunes").checked;
-        var martes = document.getElementById("martes").checked;
-        var miercoles = document.getElementById("miercoles").checked;
-        var jueves = document.getElementById("jueves").checked;
-        var viernes = document.getElementById("viernes").checked;
-        var sabado = document.getElementById("sabado").checked;
-
-        var dias = domingo == true ? '0-1,' : '0-0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
-        dias += lunes == true ? '1-1,' : '1-0,';
-        dias += martes == true ? '2-1,' : '2-0,';
-        dias += miercoles == true ? '3-1,' : '3-0,';
-        dias += jueves == true ? '4-1,' : '4-0,';
-        dias += viernes == true ? '5-1,' : '5-0,';
-        dias += sabado == true ? '6-1' : '6-0';
-        
-        queryObj = {
-            ip: ip,
-            codigo: 'add_tarea_semanal',
-            nombre_tarea: nombre_tarea,
-            pin: pin,
-            dias: dias,
-            hora: hora,
-            estatus: estatus,
-            logica: logica,
-        };
-
-        console.log(queryObj);
-
-        axios.post('/add_tarea_semanal', queryObj).then(
-            (response) => {
-                var result = response.data;
-                console.log(result);
-                table.ajax.reload();
-            },
-            (error) => {
-                console.log(error);
+            function polaridad(item) {
+                if (document.getElementById("polaridad_semanal").value == 0) {
+                    item.innerHTML = '<i class="fas fa-circle"></i>';
+                    document.getElementById("polaridad_semanal").value = 1;
+                    document.getElementById("tipo_polaridad").innerText = 'Logica invertida';
+                } else {
+                    document.getElementById("polaridad_semanal").value = 0;
+                    item.innerHTML = '<i class="far fa-circle"></i>';
+                    document.getElementById("tipo_polaridad").innerText = 'Logica normal';
+                }
             }
-        );
 
-    }
-
-    function test(){
-        queryObj = {
-            ip: '192.168.100.33',
-        };
-        axios.post('/consulta_tareas', queryObj).then(
-            (response) => {
-                var result = response.data;
-                console.log(result);
-            },
-            (error) => {
-                console.log(error);
+            function nueva_tarea() {
+                document.getElementById("form_tarea").style.display = 'block';
             }
-        );
-        //table.ajax.reload();
-    }
-    
-	$('.timepicker').timepicker({
-		timeFormat: 'HH:mm',
-		interval: 60,
-		minTime: '0',
-		maxTime: '23:59',
-		defaultTime: '',
-		startTime: '00:00',
-		dynamic: false,
-		dropdown: true,
-		scrollbar: false
-	});
 
+            function cancelar_tarea() {
+                document.getElementById("form_tarea").style.display = 'none';
+            }
+
+            function add_tarea_semanal() {
+                var ip = '192.168.100.31'; //CAMBIAR Y MANDARLO DESDE EL BACKEND 
+                var nombre_tarea = document.getElementById("nombre_semanal").value;
+                var pin = document.getElementById("pin_semanal").value;
+                var hora = document.getElementById("hora_semanal").value;
+                var estatus = document.getElementById("estatus_semanal").checked;
+                var logica = document.getElementById("polaridad_semanal").value;
+
+                var domingo = document.getElementById("domingo").checked;
+                var lunes = document.getElementById("lunes").checked;
+                var martes = document.getElementById("martes").checked;
+                var miercoles = document.getElementById("miercoles").checked;
+                var jueves = document.getElementById("jueves").checked;
+                var viernes = document.getElementById("viernes").checked;
+                var sabado = document.getElementById("sabado").checked;
+
+                // var dias = domingo == true ? '0-1,' : '0-0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
+                // dias += lunes == true ? '1-1,' : '1-0,';
+                // dias += martes == true ? '2-1,' : '2-0,';
+                // dias += miercoles == true ? '3-1,' : '3-0,';
+                // dias += jueves == true ? '4-1,' : '4-0,';
+                // dias += viernes == true ? '5-1,' : '5-0,';
+                // dias += sabado == true ? '6-1' : '6-0';
+
+                var dias = domingo == true ? '1,' : '0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
+                dias += lunes == true ? '1,' : '0,';
+                dias += martes == true ? '1,' : '0,';
+                dias += miercoles == true ? '1,' : '0,';
+                dias += jueves == true ? '1,' : '0,';
+                dias += viernes == true ? '1,' : '0,';
+                dias += sabado == true ? '1' : '0';
+
+                queryObj = {
+                    ip: ip,
+                    codigo: 'add_tarea_semanal',
+                    nombre_tarea: nombre_tarea,
+                    pin: pin,
+                    dias: dias,
+                    hora: hora,
+                    estatus: estatus,
+                    logica: logica,
+                };
+
+                console.log(queryObj);
+
+                axios.post('/add_tarea_semanal', queryObj).then(
+                    (response) => {
+                        var result = response.data;
+                        console.log(result);
+                        table.ajax.reload();
+                        table.clear().draw();
+
+                        document.getElementById("nombre_semanal").value = '';
+                        document.getElementById("pin_semanal").value = '#';
+                        document.getElementById("hora_semanal").value = '';
+                        document.getElementById("estatus_semanal").checked = false;
+                        document.getElementById("polaridad_semanal").value = 0;
+
+                        document.getElementById("polaridad_semanal").value = 0;
+                        document.getElementById("btn_semanal").innerHTML = '<i class="far fa-circle"></i>';
+                        document.getElementById("tipo_polaridad").innerText = 'Logica normal';
+
+                        document.getElementById("domingo").checked = false;
+                        document.getElementById("lunes").checked = false;
+                        document.getElementById("martes").checked = false;
+                        document.getElementById("miercoles").checked = false;
+                        document.getElementById("jueves").checked = false;
+                        document.getElementById("viernes").checked = false;
+                        document.getElementById("sabado").checked = false;
+                        document.getElementById("form_tarea").style.display = 'none';
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+            }
+
+            function test() {
+                queryObj = {
+                    ip: '192.168.100.31',
+                };
+                axios.post('/consulta_tareas', queryObj).then(
+                    (response) => {
+                        var result = response.data;
+                        console.log(result);
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+                //table.ajax.reload();
+            }
+
+            $('.timepicker').timepicker({
+                timeFormat: 'HH:mm',
+                interval: 60,
+                minTime: '0',
+                maxTime: '23:59',
+                defaultTime: '',
+                startTime: '00:00',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: false
+            });
 </script>
 
 {% endblock %}
