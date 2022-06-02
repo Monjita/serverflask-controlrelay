@@ -218,6 +218,37 @@
 
 <script type="text/javascript">
 
+    var table;
+    $(function (){
+        $('#tareassd').DataTable({
+            ajax: '/api/data',
+            columns: [
+              { data: 'Nombre',
+              render: function (data, type, row) {
+                return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
+            },
+               },
+              {data: 'IP', searchable: false},
+              {data: 'Polaridad', orderable: false, searchable: false},
+              {data: 'Descripcion', orderable: false, searchable: false},
+            ],
+            
+          });
+          
+          table = $('#tareas').DataTable({
+            ajax: { url:'/consulta_tareas',type:'GET',data:{ ip:'192.168.100.33' } },
+            columns: [
+              { data: 'Nombre_tarea'},
+              {data:  'Dias', orderable: false, searchable: false},
+              {data: 'Pin',},
+              {data: 'Hora', orderable: false, searchable: false},
+              {data: 'Estatus', orderable: false, searchable: false},
+              {data: 'Logica', orderable: false, searchable: false},
+            ],
+            
+          });
+    });
+
     function polaridad(item){
         if(document.getElementById("polaridad_semanal").value == 0){
             item.innerHTML = '<i class="fas fa-circle"></i>';
@@ -265,6 +296,7 @@
         
         queryObj = {
             ip: ip,
+            codigo: 'add_tarea_semanal',
             nombre_tarea: nombre_tarea,
             pin: pin,
             dias: dias,
@@ -275,37 +307,18 @@
 
         console.log(queryObj);
 
-    }
-
-    $(function (){
-        $('#tareassd').DataTable({
-            ajax: '/api/data',
-            columns: [
-              { data: 'Nombre',
-              render: function (data, type, row) {
-                return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
+        axios.post('/add_tarea_semanal', queryObj).then(
+            (response) => {
+                var result = response.data;
+                console.log(result);
+                table.ajax.reload();
             },
-               },
-              {data: 'IP', searchable: false},
-              {data: 'Polaridad', orderable: false, searchable: false},
-              {data: 'Descripcion', orderable: false, searchable: false},
-            ],
-            
-          });
-          
-          $('#tareas').DataTable({
-            ajax: { url:'/consulta_tareas',type:'GET',data:{ ip:'192.168.100.33' } },
-            columns: [
-              { data: 'Nombre_tarea'},
-              {data:  'Dias', orderable: false, searchable: false},
-              {data: 'Pin',},
-              {data: 'Hora', orderable: false, searchable: false},
-              {data: 'Estatus', orderable: false, searchable: false},
-              {data: 'Logica', orderable: false, searchable: false},
-            ],
-            
-          });
-    });
+            (error) => {
+                console.log(error);
+            }
+        );
+
+    }
 
     function test(){
         queryObj = {

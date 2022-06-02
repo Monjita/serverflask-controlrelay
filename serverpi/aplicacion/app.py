@@ -125,9 +125,9 @@ def tareas_test():
     return render_template("tareas.html")
 
 #Tareas agregar tarea
-@app.route('/add_tarea', methods=['GET','POST'])
+@app.route('/add_tarea_semanal', methods=['GET','POST'])
 @login_required
-def add_tarea():
+def add_tarea_semanal():
     from aplicacion.models import Equipo
     import json
     import socket
@@ -141,8 +141,6 @@ def add_tarea():
             message = json.dumps(request.json)
             sock.sendall(bytes(message, encoding="utf-8"))
             dato = sock.recv(1024)
-            #data = data.decode("utf-8")
-            #dato = json.loads(data)
             if dato == 'ok':
                 sock.sendall('')
         finally:
@@ -171,11 +169,11 @@ def consulta_tareas():
             data = data.decode("utf-8")
             # print(data)
             dato = json.loads(data)
-            if data == 'ok':
+            if dato == 'ok':
                 sock.sendall('')
         finally:
             sock.close()
-    return { 'data': dato}
+    return { 'data': dato }
 
 @app.route('/api/data', methods=['GET','POST'])
 def data():
