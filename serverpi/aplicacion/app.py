@@ -124,6 +124,59 @@ def paramiko():
 def tareas_test():
     return render_template("tareas.html")
 
+#Tareas agregar tarea
+@app.route('/add_tarea', methods=['GET','POST'])
+@login_required
+def add_tarea():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            #data = data.decode("utf-8")
+            #dato = json.loads(data)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato
+    
+#Tareas test raspberry
+@app.route('/consulta_tareas', methods=['GET','POST'])
+@login_required
+def consulta_tareas():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    # raspberry = Equipo.query.filter_by(IP='192.168.100.33').first()
+    raspberry = Equipo.query.filter_by(IP=request.args.get('ip')).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            msg = {'codigo': 'tareas'}
+            message = json.dumps(msg)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            data = sock.recv(1024)
+            data = data.decode("utf-8")
+            # print(data)
+            dato = json.loads(data)
+            if data == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return { 'data': dato}
+
 @app.route('/api/data', methods=['GET','POST'])
 def data():
     from aplicacion.models import Equipo
@@ -152,7 +205,7 @@ def tareas(id):
             data = sock.recv(1024)
             data = data.decode("utf-8")
             dato = json.loads(data)
-            if data == 'ok':
+            if dato == 'ok':
                 sock.sendall('')
         finally:
             sock.close()
