@@ -146,8 +146,32 @@ def add_tarea_semanal():
         finally:
             sock.close()
     return dato
+
+#eliminar tareas
+@app.route('/borrar_tarea', methods=['GET','POST'])
+@login_required
+def borrar_tarea():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato
+
     
-#Tareas test raspberry
+#Tareas cosulta de todas las tareas
 @app.route('/consulta_tareas', methods=['GET','POST'])
 @login_required
 def consulta_tareas():
@@ -175,6 +199,7 @@ def consulta_tareas():
             sock.close()
     return { 'data': dato }
 
+#test de tabla con ajax
 @app.route('/api/data', methods=['GET','POST'])
 def data():
     from aplicacion.models import Equipo
@@ -196,7 +221,7 @@ def tareas(id):
         server_address = (raspberry.IP, int(raspberry.Puerto))
         sock.connect(server_address)
         try:
-            msg = {'codigo': 'estatus_relay'}
+            msg = {'codigo': 'reles_tareas'}
             #data = json.dumps(msg)
             message = json.dumps(msg)
             sock.sendall(bytes(message, encoding="utf-8"))

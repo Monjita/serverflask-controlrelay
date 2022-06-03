@@ -2,7 +2,7 @@
 <div class="container">
     <div class="row d-flex justify-content-center ">
         <div class="my-2">
-            PENDIENTE OBTENER DATOS DE LOS RELEVADORES
+            <h4>TAREAS RASPBERRY PI: <span class="text-danger"> {{raspberry.Nombre}}</span></h4>
             <!-- <h5 class="form-signin-heading">Dispositivo: <span class="text-danger"></span></h5> -->
         </div>
     </div>
@@ -20,7 +20,7 @@
         <div class="tab-content w-100" id="pills-tabContent" role="tabpanel">
             <div id="tareas1" class="tab-pane fade show active">
                 <div class="d-flex flex-column">
-                    <div class="my-2 ml-4">
+                    <div class="my-2">
                         <button class="btn btn-sm btn-primary" onclick="nueva_tarea()">Nueva tarea</button>
                     </div>
                     <div id="form_tarea" style="display: none;">
@@ -28,9 +28,11 @@
 
                             <div class="d-flex flex-row col-9">
                                 <div class="floating mx-2">
-                                    <select class="form-control form-control-sm text-center" id="pin_semanal">
-                                        <option hidden disabled selected value="#">Elige un Pin</option>
-                                        <option>5</option>
+                                    <select class="form-control form-control-sm text-sm" id="pin_semanal">
+                                        <option hidden disabled selected value="#">Selecciona un relevador</option>
+                                        {% for rele in reles %}
+                                            <option value="{{rele.Pin}}">{{rele.Nombre}} - Pin: {{rele.Pin}}</option>
+                                        {% endfor %}
                                     </select>
                                     <span>Pin del Relevador</span>
                                 </div>
@@ -177,19 +179,20 @@
 
                 </div>
 
-                <div class="d-flex mt-3 justify-content-center ">
-                    <table class="table table-sm" id="tareas">
-                        <thead>
-                            <tr>
+                <div class=" mt-3 table-responsive">
+                    <table class="table table-sm table-rasp" id="tareas" style="background-color: white;">
+                        <thead class="table-dark text-sm">
+                            <tr width="100%">
                                 <th>Nombre de la tarea</th>
+                                <th>Nombre del relevador</th>
                                 <th>Pin</th>
-                                <th>Dias</th>
+                                <th width="15%">Dias</th>
                                 <th>Hora</th>
                                 <th>Estatus</th>
                                 <th>Logica</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-sm">
 
                         </tbody>
                     </table>
@@ -217,226 +220,269 @@
 
 <script type="text/javascript">
     var table;
+    var ip_rasberry = '{{ raspberry.IP }}';
+    
     $(function() {
-                $('#tareassd').DataTable({
-                    ajax: '/api/data',
-                    columns: [{
-                        data: 'Nombre',
-                        render: function(data, type, row) {
-                            return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">' + data + '</button><div class="text-primary">' + row["ID"] + '</div></div>';
-                        },
-                    }, {
-                        data: 'IP',
-                        searchable: false
-                    }, {
-                        data: 'Polaridad',
-                        orderable: false,
-                        searchable: false
-                    }, {
-                        data: 'Descripcion',
-                        orderable: false,
-                        searchable: false
-                    }, ],
+        //console.log(ip_raspberry);
+        $('#tareassd').DataTable({
+            ajax: '/api/data',
+            columns: [
+                {
+                    data: 'Nombre',
+                    render: function(data, type, row) {
+                        return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">' + data + '</button><div class="text-primary">' + row["ID"] + '</div></div>';
+                    },
+                }, 
+                {
+                    data: 'IP',
+                    searchable: false
+                }, 
+                {
+                    data: 'Polaridad',
+                    orderable: false,
+                    searchable: false
+                }, 
+                {
+                    data: 'Descripcion',
+                    orderable: false,
+                    searchable: false 
+                },
+            ],
+        });
 
-                });
-
-                table = $('#tareas').DataTable({
-                        ajax: {
-                            url: '/consulta_tareas',
-                            type: 'GET',
-                            data: {
-                                ip: '192.168.100.31'
-                            }
-                        },
-                        columns: [{
-                                data: 'Nombre_tarea'
-                                },
-                                {
-                                    data: 'Pin',
-                                },
-                                {
-                                    data: 'Dias',
-                                    orderable: false,
-                                    searchable: false,
-                                    render: function(data, type, row) {
-                                        //return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
-                                        var dias = data.split(',');
-                                        console.log(dias);
-                                        var d = dias[0] == 1 ? '<span class="text-primary font-weight-bold"">D</span>' : '<span class="text-danger font-weight-bold"">D</span>';
-                                        d += dias[1] == 1 ? '<span class="text-primary font-weight-bold""> L</span>' : '<span class="text-danger font-weight-bold""> L</span>';
-                                        d += dias[2] == 1 ? '<span class="text-primary font-weight-bold""> M</span>' : '<span class="text-danger font-weight-bold""> M</span>';
-                                        d += dias[3] == 1 ? '<span class="text-primary font-weight-bold""> M</span>' : '<span class="text-danger font-weight-bold""> M</span>';
-                                        d += dias[4] == 1 ? '<span class="text-primary font-weight-bold""> J</span>' : '<span class="text-danger font-weight-bold""> J</span>';
-                                        d += dias[5] == 1 ? '<span class="text-primary font-weight-bold""> V</span>' : '<span class="text-danger font-weight-bold""> V</span>';
-                                        d += dias[6] == 1 ? '<span class="text-primary font-weight-bold""> S</span>' : '<span class="text-danger font-weight-bold""> S</span>';
-
-                                        return '<div class="">' + d + '</div';
-                                    },
-                                },
-                                {
-                                    data: 'Hora',
-                                },
-                                {
-                                    data: 'Estatus',
-                                    orderable: false,
-                                    searchable: false,
-                                    render: function(data, type, row) {
-                                        if (data == true) {
-                                            return '<label class="switch_rele" style="position: relative; margin-top: 5px; margin-left: 0px;">'
-                                                    +'<input type="checkbox" checked="on">'
-                                                    +'<span class="slider round"></span>'
-                                                    +'</label>';
-                                        }
-                                        else {
-                                            return '<label class="switch_rele" style="position: relative; margin-top: 5px; margin-left: 0px;">'
-                                                +'<input type="checkbox" >'
-                                                +'<span class="slider round"></span>'
-                                                +'</label>';
-                                        }
-                                    }
-                                },
-                                {
-                                    data: 'Logica',
-                                    orderable: false,
-                                    searchable: false,
-                                    render: function(data, type, row) {
-                                        if (data == true) {
-                                            return '<button class="invertir text-primary" style="border:none;background:none; cursor:pointer;margin-top: 0px; margin-left: 0px;"><i class="fas fa-circle"></i></button>';
-                                        }
-                                        else{
-                                            return '<button class="invertir text-primary" style="border:none;background:none; cursor:pointer;margin-top: 0px; margin-left: 0px;"><i class="far fa-circle"></i></button>';
-                                        }
-                                    }
-                                },
-                            ],
-                        });
-                });
-
-            function polaridad(item) {
-                if (document.getElementById("polaridad_semanal").value == 0) {
-                    item.innerHTML = '<i class="fas fa-circle"></i>';
-                    document.getElementById("polaridad_semanal").value = 1;
-                    document.getElementById("tipo_polaridad").innerText = 'Logica invertida';
-                } else {
-                    document.getElementById("polaridad_semanal").value = 0;
-                    item.innerHTML = '<i class="far fa-circle"></i>';
-                    document.getElementById("tipo_polaridad").innerText = 'Logica normal';
+    table = $('#tareas').DataTable({
+            ajax: {
+                url: '/consulta_tareas',
+                type: 'GET',
+                data: {
+                    //ip: '192.168.100.250'
+                    ip: ip_rasberry
                 }
-            }
-
-            function nueva_tarea() {
-                document.getElementById("form_tarea").style.display = 'block';
-            }
-
-            function cancelar_tarea() {
-                document.getElementById("form_tarea").style.display = 'none';
-            }
-
-            function add_tarea_semanal() {
-                var ip = '192.168.100.31'; //CAMBIAR Y MANDARLO DESDE EL BACKEND 
-                var nombre_tarea = document.getElementById("nombre_semanal").value;
-                var pin = document.getElementById("pin_semanal").value;
-                var hora = document.getElementById("hora_semanal").value;
-                var estatus = document.getElementById("estatus_semanal").checked;
-                var logica = document.getElementById("polaridad_semanal").value;
-
-                var domingo = document.getElementById("domingo").checked;
-                var lunes = document.getElementById("lunes").checked;
-                var martes = document.getElementById("martes").checked;
-                var miercoles = document.getElementById("miercoles").checked;
-                var jueves = document.getElementById("jueves").checked;
-                var viernes = document.getElementById("viernes").checked;
-                var sabado = document.getElementById("sabado").checked;
-
-                // var dias = domingo == true ? '0-1,' : '0-0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
-                // dias += lunes == true ? '1-1,' : '1-0,';
-                // dias += martes == true ? '2-1,' : '2-0,';
-                // dias += miercoles == true ? '3-1,' : '3-0,';
-                // dias += jueves == true ? '4-1,' : '4-0,';
-                // dias += viernes == true ? '5-1,' : '5-0,';
-                // dias += sabado == true ? '6-1' : '6-0';
-
-                var dias = domingo == true ? '1,' : '0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
-                dias += lunes == true ? '1,' : '0,';
-                dias += martes == true ? '1,' : '0,';
-                dias += miercoles == true ? '1,' : '0,';
-                dias += jueves == true ? '1,' : '0,';
-                dias += viernes == true ? '1,' : '0,';
-                dias += sabado == true ? '1' : '0';
-
-                queryObj = {
-                    ip: ip,
-                    codigo: 'add_tarea_semanal',
-                    nombre_tarea: nombre_tarea,
-                    pin: pin,
-                    dias: dias,
-                    hora: hora,
-                    estatus: estatus,
-                    logica: logica,
-                };
-
-                console.log(queryObj);
-
-                axios.post('/add_tarea_semanal', queryObj).then(
-                    (response) => {
-                        var result = response.data;
-                        console.log(result);
-                        table.ajax.reload();
-                        table.clear().draw();
-
-                        document.getElementById("nombre_semanal").value = '';
-                        document.getElementById("pin_semanal").value = '#';
-                        document.getElementById("hora_semanal").value = '';
-                        document.getElementById("estatus_semanal").checked = false;
-                        document.getElementById("polaridad_semanal").value = 0;
-
-                        document.getElementById("polaridad_semanal").value = 0;
-                        document.getElementById("btn_semanal").innerHTML = '<i class="far fa-circle"></i>';
-                        document.getElementById("tipo_polaridad").innerText = 'Logica normal';
-
-                        document.getElementById("domingo").checked = false;
-                        document.getElementById("lunes").checked = false;
-                        document.getElementById("martes").checked = false;
-                        document.getElementById("miercoles").checked = false;
-                        document.getElementById("jueves").checked = false;
-                        document.getElementById("viernes").checked = false;
-                        document.getElementById("sabado").checked = false;
-                        document.getElementById("form_tarea").style.display = 'none';
+            },
+            columns: [{
+                    data: 'Nombre_tarea'
                     },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-
-            }
-
-            function test() {
-                queryObj = {
-                    ip: '192.168.100.31',
-                };
-                axios.post('/consulta_tareas', queryObj).then(
-                    (response) => {
-                        var result = response.data;
-                        console.log(result);
+                    {
+                        data: 'Nombre',
+                        orderable: false,
+                        searchable: false,
                     },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-                //table.ajax.reload();
-            }
+                    {
+                        data: 'Pin',
+                    },
+                    {
+                        data: 'Dias',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            //return '<div class="d-flex"><button class="btn btn-sm btn-warning mx-2">'+data+'</button><div class="text-primary">'+row["ID"]+'</div></div>';
+                            var dias = data.split(',');
+                            //console.log(dias);
+                            var d = dias[0] == 1 ? '<span class="text-primary font-weight-bold"">D</span>' : '<span class="text-danger font-weight-bold"">D</span>';
+                            d += dias[1] == 1 ? '<span class="text-primary font-weight-bold""> L</span>' : '<span class="text-danger font-weight-bold""> L</span>';
+                            d += dias[2] == 1 ? '<span class="text-primary font-weight-bold""> M</span>' : '<span class="text-danger font-weight-bold""> M</span>';
+                            d += dias[3] == 1 ? '<span class="text-primary font-weight-bold""> M</span>' : '<span class="text-danger font-weight-bold""> M</span>';
+                            d += dias[4] == 1 ? '<span class="text-primary font-weight-bold""> J</span>' : '<span class="text-danger font-weight-bold""> J</span>';
+                            d += dias[5] == 1 ? '<span class="text-primary font-weight-bold""> V</span>' : '<span class="text-danger font-weight-bold""> V</span>';
+                            d += dias[6] == 1 ? '<span class="text-primary font-weight-bold""> S</span>' : '<span class="text-danger font-weight-bold""> S</span>';
 
-            $('.timepicker').timepicker({
-                timeFormat: 'HH:mm',
-                interval: 60,
-                minTime: '0',
-                maxTime: '23:59',
-                defaultTime: '',
-                startTime: '00:00',
-                dynamic: false,
-                dropdown: true,
-                scrollbar: false
+                            return '<div class="">' + d + '</div';
+                        },
+                    },
+                    {
+                        data: 'Hora',
+                    },
+                    {
+                        data: 'Estatus',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            if (data == true) {
+                                return '<div class="d-flex"><label class="switch_rele" style="position: relative; margin-top: 1px; margin-left: 0px;">'
+                                        +'<input type="checkbox" checked="on">'
+                                        +'<span class="slider round"></span>'
+                                        +'</label></div>';
+                            }
+                            else {
+                                return '<div class="d-flex"><label class="switch_rele" style="position: relative; margin-top: 1px; margin-left: 0px;">'
+                                    +'<input type="checkbox" >'
+                                    +'<span class="slider round"></span>'
+                                    +'</label></div>';
+                            }
+                        }
+                    },
+                    {
+                        data: 'Logica',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            if (data == true) {
+                                return '<div class="d-flex">'
+                                        +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="fas fa-circle"></i></button>'
+                                        +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-4" style="border:none; margin-top: -6px;" onclick="borrar_tarea('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                    +'</div>';
+                            }
+                            else{
+                                return '<div class="d-flex">'
+                                        +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="far fa-circle"></i></button>'
+                                        +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-4" style="border:none; margin-top: -6px;" onclick="borrar_tarea('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                    +'</div>';
+                            }
+                        }
+                    },
+                ],
             });
+    });
+
+
+
+        function polaridad(item){
+            if(document.getElementById("polaridad_semanal").value == 0){
+                item.innerHTML = '<i class="fas fa-circle"></i>';
+                document.getElementById("polaridad_semanal").value = 1;
+                document.getElementById("tipo_polaridad").innerText = 'Logica invertida';
+            } 
+            else{
+                document.getElementById("polaridad_semanal").value = 0;
+                item.innerHTML = '<i class="far fa-circle"></i>';
+                document.getElementById("tipo_polaridad").innerText = 'Logica normal';
+            }
+        }
+
+        function nueva_tarea() {
+            document.getElementById("form_tarea").style.display = 'block';
+        }
+
+        function cancelar_tarea() {
+            document.getElementById("form_tarea").style.display = 'none';
+        }
+
+        function borrar_tarea(id){
+            queryObj = {
+                //ip: '192.168.100.31',
+                ip: ip_rasberry,
+                id: id,
+                codigo: 'borrar_tarea',
+            };
+            axios.post('/borrar_tarea', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    console.log(result);
+                    table.ajax.reload();
+                    table.clear().draw();
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        }
+
+        function add_tarea_semanal() {
+            // var ip = '192.168.100.250'; //CAMBIAR Y MANDARLO DESDE EL BACKEND 
+            var nombre_tarea = document.getElementById("nombre_semanal").value;
+            var pin = document.getElementById("pin_semanal").value;
+            var hora = document.getElementById("hora_semanal").value;
+            var estatus = document.getElementById("estatus_semanal").checked;
+            var logica = document.getElementById("polaridad_semanal").value;
+
+            var domingo = document.getElementById("domingo").checked;
+            var lunes = document.getElementById("lunes").checked;
+            var martes = document.getElementById("martes").checked;
+            var miercoles = document.getElementById("miercoles").checked;
+            var jueves = document.getElementById("jueves").checked;
+            var viernes = document.getElementById("viernes").checked;
+            var sabado = document.getElementById("sabado").checked;
+
+            // var dias = domingo == true ? '0-1,' : '0-0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
+            // dias += lunes == true ? '1-1,' : '1-0,';
+            // dias += martes == true ? '2-1,' : '2-0,';
+            // dias += miercoles == true ? '3-1,' : '3-0,';
+            // dias += jueves == true ? '4-1,' : '4-0,';
+            // dias += viernes == true ? '5-1,' : '5-0,';
+            // dias += sabado == true ? '6-1' : '6-0';
+
+            var dias = domingo == true ? '1,' : '0,'; //el primero indica el dia domingo - 0 y el segundo 0 off, 1 on
+            dias += lunes == true ? '1,' : '0,';
+            dias += martes == true ? '1,' : '0,';
+            dias += miercoles == true ? '1,' : '0,';
+            dias += jueves == true ? '1,' : '0,';
+            dias += viernes == true ? '1,' : '0,';
+            dias += sabado == true ? '1' : '0';
+
+            queryObj = {
+                ip: ip_rasberry,
+                codigo: 'add_tarea_semanal',
+                nombre_tarea: nombre_tarea,
+                pin: pin,
+                dias: dias,
+                hora: hora,
+                estatus: estatus,
+                logica: logica,
+            };
+
+            console.log(queryObj);
+
+            axios.post('/add_tarea_semanal', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    console.log(result);
+                    table.ajax.reload();
+                    table.clear().draw();
+
+                    document.getElementById("nombre_semanal").value = '';
+                    document.getElementById("pin_semanal").value = '#';
+                    document.getElementById("hora_semanal").value = '';
+                    document.getElementById("estatus_semanal").checked = false;
+                    document.getElementById("polaridad_semanal").value = 0;
+
+                    document.getElementById("polaridad_semanal").value = 0;
+                    document.getElementById("btn_semanal").innerHTML = '<i class="far fa-circle"></i>';
+                    document.getElementById("tipo_polaridad").innerText = 'Logica normal';
+
+                    document.getElementById("domingo").checked = false;
+                    document.getElementById("lunes").checked = false;
+                    document.getElementById("martes").checked = false;
+                    document.getElementById("miercoles").checked = false;
+                    document.getElementById("jueves").checked = false;
+                    document.getElementById("viernes").checked = false;
+                    document.getElementById("sabado").checked = false;
+                    document.getElementById("form_tarea").style.display = 'none';
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+
+        }
+
+        function test() {
+            queryObj = {
+                //ip: '192.168.100.31',
+                ip: ip_rasberry
+            };
+            axios.post('/consulta_tareas', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    console.log(result);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            //table.ajax.reload();
+        }
+
+        $('.timepicker').timepicker({
+            timeFormat: 'HH:mm',
+            interval: 60,
+            minTime: '0',
+            maxTime: '23:59',
+            defaultTime: '',
+            startTime: '00:00',
+            dynamic: false,
+            dropdown: true,
+            scrollbar: false
+        });
 </script>
 
 {% endblock %}
