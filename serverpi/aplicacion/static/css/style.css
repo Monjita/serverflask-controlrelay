@@ -242,3 +242,8 @@
                 line-height: 1.5;
                 border-radius: .2rem;
             }
+
+            .ui-timepicker-container{
+                z-index:99999 !important;
+                position: absolute !important;
+            }
