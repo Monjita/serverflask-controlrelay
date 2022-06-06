@@ -213,6 +213,7 @@ def change_logica(pin, polaridad, estatus):
     
 #agregar tarea semanal en la bd
 def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
+    from crontab import CronTab
     rele = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
     tabla = "tareas" #verificar porque no inserta la nueva fila
     columnas = ("Nombre_tarea","Fecha", "Dias", "Hora", "Nombre", "Pin", "Estatus", "Logica_rele")
@@ -220,8 +221,38 @@ def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
     session.execute(f"INSERT INTO {tabla} {columnas} VALUES {valores}")
     session.commit()
 
+    tarea = session.query(Tareas).filter(Tareas.Nombre_tarea == str(nombre)).one()
+
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(tarea.id)) #pin, estatus, logica
+    tiempo = str(hora).split(":")
+    cron_hora = tiempo[0]
+    cron_min = tiempo[1]
+    time_dias = str(dias).split(",")
+    array = []
+    i=0
+
+    for dia in time_dias:
+        if int(dia) == 1:
+            array.append(i)
+        i=i+1
+    
+    str_dias = ""
+    i=0
+    for ele in array:
+        if i == 0:
+            str_dias += str(ele)
+        else:
+            str_dias += '-'+str(ele)
+        i=i+1
+
+    job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
+    cron.write()
+
+
 #editar tarea semanal en la bd
 def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
+    from crontab import CronTab
     rele = session.query(Relevadores).filter(Relevadores.Pin == pin).one()
     tarea = session.query(Tareas).filter(Tareas.id == id).one()
     tarea.Nombre_tarea = str(nombre)
@@ -234,10 +265,49 @@ def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
     tarea.Logica_rele = int(logica)
     session.commit()
 
+    my_cron = CronTab(user='pi')
+    for job in my_cron:
+        if job.comment == 'semanal_'+str(id):
+            my_cron.remove(job)
+            my_cron.write()
+
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(id)) #pin, estatus, logica
+    tiempo = str(hora).split(":")
+    cron_hora = tiempo[0]
+    cron_min = tiempo[1]
+    time_dias = str(dias).split(",")
+    array = []
+    i=0
+
+    for dia in time_dias:
+        if int(dia) == 1:
+            array.append(i)
+        i=i+1
+    
+    str_dias = ""
+    i=0
+    for ele in array:
+        if i == 0:
+            str_dias += str(ele)
+        else:
+            str_dias += '-'+str(ele)
+        i=i+1
+
+    job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
+    cron.write()
+    
+
 
 #borrar tarea
 def borrar_tarea(id):
+    from crontab import CronTab
     tarea = session.query(Tareas).filter(Tareas.id == id).one()
+    my_cron = CronTab(user='pi')
+    for job in my_cron:
+        if job.comment == 'semanal_'+str(tarea.id):
+            my_cron.remove(job)
+            my_cron.write()
     session.delete(tarea)
     session.commit()
     
