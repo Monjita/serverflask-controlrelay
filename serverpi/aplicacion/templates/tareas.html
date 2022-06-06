@@ -540,7 +540,12 @@
         var dias_semana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
         var dias = '';
         dias_semana.forEach(function(dia) {
-            dias += document.getElementById('value_'+dia).value == 1 ? '1,' : '0,';             
+            if(dia != 'S'){
+                dias += document.getElementById('value_'+dia).value == 1 ? '1,' : '0,';             
+            }
+            else{
+                dias += document.getElementById('value_'+dia).value == 1 ? '1' : '0';             
+            }
         });
 
         queryObj = {
@@ -554,7 +559,7 @@
             logica: logica,
         };
 
-        //console.log(queryObj);
+        console.log(queryObj);
 
         axios.post('/add_tarea_semanal', queryObj).then(
             (response) => {
