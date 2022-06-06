@@ -71,6 +71,10 @@ def test():
 def index():
     return render_template('index.html')
 
+@app.route('/favicon.ico')
+def favicon():
+    return 'dummy', 200
+
 # Comandos
 @app.route('/comandos')
 @login_required
@@ -128,6 +132,29 @@ def tareas_test():
 @app.route('/add_tarea_semanal', methods=['GET','POST'])
 @login_required
 def add_tarea_semanal():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato
+
+#Tareas agregar tarea
+@app.route('/editar_tarea_semanal', methods=['GET','POST'])
+@login_required
+def editar_tarea_semanal():
     from aplicacion.models import Equipo
     import json
     import socket
