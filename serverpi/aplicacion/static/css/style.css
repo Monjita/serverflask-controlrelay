@@ -89,7 +89,7 @@
                 border-right: none;
             }
             
-            .table-rasp {
+            .table-rasp, .table-reles {
                 border: 1px solid #999999;
             }
             
@@ -100,6 +100,11 @@
             .table-rasp>tbody tr:hover {
                 background-color: rgb(231, 224, 224);
             }
+
+            .table-reles>tbody tr:hover {
+                background-color: rgb(246, 247, 238);
+            }
+
             /* switch relevador */
             
             .switch_rele {
@@ -247,3 +252,10 @@
                 z-index:99999 !important;
                 position: absolute !important;
             }
+
+            .dataTables_length>label>select,
+            .dataTables_filter>label>input{
+                background-color: #FFFFFF !important;
+            }
+
+            
