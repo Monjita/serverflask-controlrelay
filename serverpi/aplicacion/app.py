@@ -198,10 +198,10 @@ def borrar_tarea():
     return dato
 
     
-#Tareas cosulta de todas las tareas
-@app.route('/consulta_tareas', methods=['GET','POST'])
+#Consulta de tareas semanales
+@app.route('/tareas_semanales', methods=['GET','POST'])
 @login_required
-def consulta_tareas():
+def tareas_semanales():
     from aplicacion.models import Equipo
     import json
     import socket
@@ -213,7 +213,35 @@ def consulta_tareas():
         server_address = (raspberry.IP, int(raspberry.Puerto))
         sock.connect(server_address)
         try:
-            msg = {'codigo': 'tareas'}
+            msg = {'codigo': 'tareas_sem'}
+            message = json.dumps(msg)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            data = sock.recv(1024)
+            data = data.decode("utf-8")
+            # print(data)
+            dato = json.loads(data)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return { 'data': dato }
+
+#Consulta tareas independientes
+@app.route('/tareas_independientes', methods=['GET','POST'])
+@login_required
+def tareas_independientes():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.args.get('ip')).first()
+    # raspberry = Equipo.query.filter_by(IP='192.168.100.75').first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            msg = {'codigo': 'tareas_inde'}
             message = json.dumps(msg)
             sock.sendall(bytes(message, encoding="utf-8"))
             data = sock.recv(1024)
