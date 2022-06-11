@@ -151,10 +151,33 @@ def add_tarea_semanal():
             sock.close()
     return dato
 
-#Tareas agregar tarea
+#Tareas agregar tarea semanales
 @app.route('/editar_tarea_semanal', methods=['GET','POST'])
 @login_required
 def editar_tarea_semanal():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato
+
+#Tareas agregar tarea independientes
+@app.route('/editar_tarea_independiente', methods=['GET','POST'])
+@login_required
+def editar_tarea_independiente():
     from aplicacion.models import Equipo
     import json
     import socket

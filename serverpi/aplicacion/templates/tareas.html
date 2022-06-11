@@ -236,7 +236,7 @@
             <div class="modal-header d-flex">
                 <div class="d-flex justify-content-center w-100">
                     <div>
-                        <h6 class="modal-title" id="titulo_modal_semanal">NUEVA TAREA</h6>
+                        <h6 class="modal-title" id="titulo_modal_independiente">NUEVA TAREA</h6>
                     </div>
                 </div>
             </div>
@@ -459,14 +459,14 @@
                                     return '<div class="d-flex d-sm-block mr-0 pr-0">'
                                             +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="fas fa-circle"></i></button><input value="1" style="display:none;">'
                                             +'<button class="invertir btn btn-sm btn-outline-primary border-0 ml-3" style="border:none; margin-top: -6px;" onclick="editar_tarea_independiente(this, '+row["ID"]+')"><i class="fas fa-edit"></i></button>'
-                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea_ind('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea_independiente('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
                                         +'</div>';
                                 }
                                 else{
                                     return '<div class="d-flex d-sm-block mr-0 pr-0">'
                                             +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="far fa-circle"></i></button><input value="0" style="display:none;">'
                                             +'<button class="invertir btn btn-sm btn-outline-primary border-0 ml-3" style="border:none; margin-top: -6px;" onclick="editar_tarea_independiente(this, '+row["ID"]+')"><i class="fas fa-edit"></i></button>'
-                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea_ind('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea_independiente('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
                                         +'</div>';
                                 }
                             }
@@ -534,10 +534,39 @@
         estatus == true ? valor_estatus.checked = true : valor_estatus.checked = false;
         logica == 1 ? valor_logica.innerHTML = '<i class="fas fa-circle"></i>' : valor_logica.innerHTML = '<i class="far fa-circle"></i>';
         logica == 1 ? nombre_logica.innerText = 'Logica invertida' : nombre_logica.innerText = 'Logica normal';
-        document.getElementById("btn_accion_semanal").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea()">Cancelar</button>'
+        document.getElementById("btn_accion_semanal").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea('+"'semanal'"+')">Cancelar</button>'
         +'<button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: 0px; margin-left: 25px;" id="btn_accion_semanal" onclick="cambio_tarea_semanal('+id+')">Realizar cambios</button>';
         //$("#editar_semanal_"+id).focus();
         $('#modal_tarea_semanal').modal({backdrop: 'static',keyboard: false});
+
+    }
+
+    function editar_tarea_independiente(item, id){
+        var row = $(item).parents('tr');
+        var cols = row.find('td');
+        var nombre_tarea = cols[0].innerText;
+        var nombre_rele = cols[1].innerText;
+        var pin = cols[2].innerText;
+        var fecha = cols[3].innerText;
+        var hora = cols[4].innerText;
+        var estatus = cols[5].children[0].children[0].children[0].checked;
+        var logica = cols[6].children[0].children[1].value;
+        document.getElementById('titulo_modal_independiente').innerHTML = 'Editar Tarea: <span class="text-danger">'+nombre_tarea+'</span>';
+        document.getElementById('pin_independiente').value = pin;
+        document.getElementById('nombre_independiente').value = nombre_tarea;
+        document.getElementById('tarea_fecha').value = fecha;
+        document.getElementById('hora_independiente').value = hora;
+        var valor_estatus = document.getElementById('estatus_independiente');
+        var valor_logica = document.getElementById('logica_independiente');
+        var nombre_logica = document.getElementById('tipo_polaridad_independiente');
+        document.getElementById('polaridad_semanal').value = logica;
+        estatus == true ? valor_estatus.checked = true : valor_estatus.checked = false;
+        logica == 1 ? valor_logica.innerHTML = '<i class="fas fa-circle"></i>' : valor_logica.innerHTML = '<i class="far fa-circle"></i>';
+        logica == 1 ? nombre_logica.innerText = 'Logica invertida' : nombre_logica.innerText = 'Logica normal';
+        document.getElementById("btn_accion_independiente").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea('+"'independiente'"+')">Cancelar</button>'
+        +'<button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: 0px; margin-left: 25px;" id="btn_accion_semanal" onclick="cambio_tarea_independiente('+id+')">Realizar cambios</button>';
+        //$("#editar_semanal_"+id).focus();
+        $('#modal_tarea_independiente').modal({backdrop: 'static',keyboard: false});
 
     }
     
@@ -654,6 +683,99 @@
         }
     }
 
+    function cambio_tarea_independiente(id){
+        var nombre_tarea = document.getElementById('nombre_independiente').value;
+        var pin = document.getElementById('pin_independiente').value;
+        var hora = document.getElementById('hora_independiente').value;
+        var estatus = document.getElementById('estatus_independiente').checked;
+        var logica = document.getElementById('polaridad_independiente').value;
+        var fecha = document.getElementById('tarea_fecha').value;
+
+        var validacion = 0;
+        if(pin == "#"){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un relevador',
+                //text: '',
+            });
+            validacion = 1;
+        }
+
+        if(nombre_tarea == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega un nombre a la tarea',
+                //text: '',
+            });
+            validacion = 1;
+        }
+
+        if(hora == "" || !validarhora(hora)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una hora valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(fecha == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una fecha valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+
+        queryObj = {
+            ip: ip_rasberry,
+            id: id,
+            codigo: 'editar_tarea_independiente',
+            nombre_tarea: nombre_tarea,
+            pin: pin,
+            fecha: fecha,
+            hora: hora,
+            estatus: estatus == true ? 1 : 0,
+            logica: logica,
+        };
+        //console.log(queryObj);
+        if(validacion == 0){
+            axios.post('/editar_tarea_independiente', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    table_ind.ajax.reload();
+                    table_ind.clear().draw();
+
+                    document.getElementById("nombre_independiente").value = '';
+                    document.getElementById("pin_independiente").value = '#';
+                    document.getElementById("hora_independiente").value = '';
+                    document.getElementById("estatus_independiente").checked = false;
+                    document.getElementById("tarea_fecha").value = '';
+                    document.getElementById("polaridad_independiente").value = 0;
+                    document.getElementById("logica_independiente").innerHTML = '<i class="far fa-circle"></i>';
+                    document.getElementById("tipo_polaridad_independiente").innerText = 'Logica normal';
+
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Cambios realizados con exito',
+                        showConfirmButton: false,
+                        timer: 1250,
+                    });
+                    $('#modal_tarea_independiente').modal('hide');
+                },
+                (error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ocurrio un error',
+                        //text: '',
+                    });
+                    console.log(error);
+                }
+            );
+        }
+    }
+
     function polaridad(item, tarea){
         if(document.getElementById("polaridad_"+tarea).value == 0){
             item.innerHTML = '<i class="fas fa-circle"></i>';
@@ -736,6 +858,51 @@
                         });
                         table.ajax.reload();
                         table.clear().draw();
+                    },
+                    (error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            //text: '',
+                        });
+                        console.log(error);
+                    }
+                );
+            }
+        });
+    }
+
+    function borrar_tarea_independiente(id){
+        queryObj = {
+            ip: ip_rasberry,
+            id: id,
+            codigo: 'borrar_tarea_independiente',
+        };
+
+        Swal.fire({
+            title: 'Confirmar para eliminar tarea',
+            // text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+            }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post('/borrar_tarea', queryObj).then(
+                    (response) => {
+                        var result = response.data;
+                        //console.log(result);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Tarea eliminada',
+                            showConfirmButton: false,
+                            timer: 1250,
+                        });
+                        table_ind.ajax.reload();
+                        table_ind.clear().draw();
                     },
                     (error) => {
                         Swal.fire({

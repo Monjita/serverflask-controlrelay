@@ -95,11 +95,10 @@ class Relevadores(Base):
             'Logica': self.Logica,            
         }
 
-class Tareas(Base):
-    __tablename__ = 'tareas'
+class Tareas_sem(Base):
+    __tablename__ = 'tareas_sem'
     id = Column(Integer, primary_key = True)
     Nombre_tarea = Column(String(500))
-    Fecha = Column(String(50))
     Dias = Column(String(50))
     Hora = Column(String(50))
     Nombre = Column(String(500))
@@ -114,8 +113,33 @@ class Tareas(Base):
         return {
             'ID': self.id,
             'Nombre_tarea': self.Nombre_tarea,
-            'Fecha': self.Fecha,
             'Dias': self.Dias,
+            'Hora': self.Hora,
+            'Nombre': self.Nombre,
+            'Pin': self.Pin,
+            'Estatus': self.Estatus,            
+            'Logica': self.Logica_rele,            
+        }
+
+class Tareas_ind(Base):
+    __tablename__ = 'tareas_ind'
+    id = Column(Integer, primary_key = True)
+    Nombre_tarea = Column(String(500))
+    Fecha = Column(String(50))
+    Hora = Column(String(50))
+    Nombre = Column(String(500))
+    Pin = Column(String(10))
+    Estatus = Column(Boolean, default = False)
+    Logica_rele = Column(Boolean, default = False)
+    
+    def __repr__(self):
+        return (u'<{self.__class__.__name__}: {self.id}>'.format(self=self))
+    
+    def to_dict(self):
+        return {
+            'ID': self.id,
+            'Nombre_tarea': self.Nombre_tarea,
+            'Fecha': self.Fecha,
             'Hora': self.Hora,
             'Nombre': self.Nombre,
             'Pin': self.Pin,
@@ -215,13 +239,13 @@ def change_logica(pin, polaridad, estatus):
 def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
     from crontab import CronTab
     rele = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
-    tabla = "tareas" #verificar porque no inserta la nueva fila
-    columnas = ("Nombre_tarea","Fecha", "Dias", "Hora", "Nombre", "Pin", "Estatus", "Logica_rele")
-    valores = (str(nombre), '', str(dias), str(hora), str(rele.Nombre) ,str(pin), estatus, logica)
+    tabla = "tareas_sem"
+    columnas = ("Nombre_tarea", "Dias", "Hora", "Nombre", "Pin", "Estatus", "Logica_rele")
+    valores = (str(nombre), str(dias), str(hora), str(rele.Nombre) ,str(pin), estatus, logica)
     session.execute(f"INSERT INTO {tabla} {columnas} VALUES {valores}")
     session.commit()
 
-    tarea = session.query(Tareas).filter(Tareas.Nombre_tarea == str(nombre)).one()
+    tarea = session.query(Tareas_sem).filter(Tareas_sem.Nombre_tarea == str(nombre)).one()
 
     cron = CronTab(user='pi')
     job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(tarea.id)) #pin, estatus, logica
@@ -243,18 +267,27 @@ def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
         if i == 0:
             str_dias += str(ele)
         else:
-            str_dias += '-'+str(ele)
+            str_dias += ','+str(ele)
         i=i+1
 
     job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
     cron.write()
 
+#agregar tarea independiente en la bd
+def add_tarea_independiente(nombre, hora, fecha, pin, estatus, logica):
+    from crontab import CronTab
+    rele = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
+    tabla = 'tareas_ind'
+    columnas = ("Nombre_tarea", "Fecha", "Hora", "Nombre", "Pin", "Estatus", "Logica_rele" )
+    valores = (str(nombre), str(fecha), str(hora), str(rele.Nombre), str(pin), estatus, logica)
+    session.execute(f"INSERT INTO {tabla} {columnas} VALUES {valores}")
+    session.commit()
 
 #editar tarea semanal en la bd
 def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
     from crontab import CronTab
     rele = session.query(Relevadores).filter(Relevadores.Pin == pin).one()
-    tarea = session.query(Tareas).filter(Tareas.id == id).one()
+    tarea = session.query(Tareas_sem).filter(Tareas_sem.id == id).one()
     tarea.Nombre_tarea = str(nombre)
     # tarea.Fecha = ''
     tarea.Dias = str(dias)
@@ -266,10 +299,13 @@ def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
     session.commit()
 
     my_cron = CronTab(user='pi')
-    for job in my_cron:
-        if job.comment == 'semanal_'+str(id):
-            my_cron.remove(job)
-            my_cron.write()
+    job_ant = my_cron.find_comment('semanal_'+str(id))
+    my_cron.remove(job_ant)
+    my_cron.write()
+    # for job in my_cron:
+    #     if job.comment == 'semanal_'+str(id):
+    #         my_cron.remove(job)
+    #         my_cron.write()
 
     cron = CronTab(user='pi')
     job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(id)) #pin, estatus, logica
@@ -291,23 +327,57 @@ def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
         if i == 0:
             str_dias += str(ele)
         else:
-            str_dias += '-'+str(ele)
+            str_dias += ','+str(ele)
         i=i+1
 
     job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
     cron.write()
+    
+#editar tarea independiente en la bd
+def editar_tarea_independiente(id, nombre, hora, fecha, pin, estatus, logica):
+    from crontab import CronTab
+    rele = session.query(Relevadores).filter(Relevadores.Pin == pin).one()
+    tarea = session.query(Tareas_ind).filter(Tareas_ind.id == id).one()
+    tarea.Nombre_tarea = str(nombre)
+    # tarea.Fecha = ''
+    tarea.Fecha = str(fecha)
+    tarea.Hora = str(hora)
+    tarea.Nombre = str(rele.Nombre)
+    tarea.Pin = str(pin)
+    tarea.Estatus = int(estatus)
+    tarea.Logica_rele = int(logica)
+    session.commit()
+
     
 
 
 #borrar tarea
 def borrar_tarea(id):
     from crontab import CronTab
-    tarea = session.query(Tareas).filter(Tareas.id == id).one()
+    tarea = session.query(Tareas_sem).filter(Tareas_sem.id == id).one()
     my_cron = CronTab(user='pi')
-    for job in my_cron:
-        if job.comment == 'semanal_'+str(tarea.id):
-            my_cron.remove(job)
-            my_cron.write()
+    job = my_cron.find_comment('semanal_'+str(tarea.id))
+    my_cron.remove(job)
+    my_cron.write()
+    # for job in my_cron:
+    #     if job.comment == 'semanal_'+str(tarea.id):
+    #         my_cron.remove(job)
+    #         my_cron.write()
+    session.delete(tarea)
+    session.commit()
+
+#borrar tarea
+def borrar_tarea_independiente(id):
+    from crontab import CronTab
+    tarea = session.query(Tareas_ind).filter(Tareas_ind.id == id).one()
+    # my_cron = CronTab(user='pi')
+    # job = my_cron.find_comment('semanal_'+str(tarea.id))
+    # my_cron.remove(job)
+    # my_cron.write()
+    # for job in my_cron:
+    #     if job.comment == 'semanal_'+str(tarea.id):
+    #         my_cron.remove(job)
+    #         my_cron.write()
     session.delete(tarea)
     session.commit()
     
@@ -420,10 +490,6 @@ def consultaRelay():
 #         relay.update(item)
 #     reles = json.dumps(relay)
 #     return reles
-
-def consulta_tareas():
-    tareas = session.query(Tareas).all()
-    array_tareas = {}
     
 #conexion web socket
 def conexion():
@@ -469,9 +535,14 @@ def conexion():
                         cambios_all(datos)
                         dato = 'ok'
                         connection.sendall(dato.encode())
-                    #consulta de todas las tareas
-                    if codigo == 'tareas':
-                        dato= [Tareas.to_dict() for Tareas in session.query(Tareas).all()]
+                    #consulta de todas las tareas semanales
+                    if codigo == 'tareas_sem':
+                        dato= [Tareas_sem.to_dict() for Tareas_sem in session.query(Tareas_sem).all()]
+                        dato = json.dumps(dato)
+                        connection.sendall(bytes(dato, encoding="utf-8"))
+                    #consulta de todas las tareas independientes
+                    if codigo == 'tareas_inde':
+                        dato= [Tareas_ind.to_dict() for Tareas_ind in session.query(Tareas_ind).all()]
                         dato = json.dumps(dato)
                         connection.sendall(bytes(dato, encoding="utf-8"))
                     #consulta de los relevadores
@@ -479,19 +550,34 @@ def conexion():
                         dato= [Relevadores.to_dict() for Relevadores in session.query(Relevadores).all()]
                         dato = json.dumps(dato)
                         connection.sendall(bytes(dato, encoding="utf-8"))
-                    #borrar tarea por id
+                    #borrar tarea semanal por id
                     if codigo == 'borrar_tarea':
                         borrar_tarea(format(datos["id"]))
                         dato = 'ok'
                         connection.sendall(dato.encode())
-                    # agregar una nueva tarea
+                    #borrar tarea semanal por id
+                    if codigo == 'borrar_tarea_independiente':
+                        borrar_tarea_independiente(format(datos["id"]))
+                        dato = 'ok'
+                        connection.sendall(dato.encode())
+                    # agregar una nueva tarea semanal
                     if codigo == 'add_tarea_semanal':
                         add_tarea_semanal(format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["dias"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]))
                         dato = 'ok'
                         connection.sendall(dato.encode())
-                    # editar una tarea con el id
+                    # agregar una nueva tarea independiente
+                    if codigo == 'add_tarea_independiente':
+                        add_tarea_independiente(format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["fecha"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]))
+                        dato = 'ok'
+                        connection.sendall(dato.encode())
+                    # editar una tarea semanal con el id
                     if codigo == 'editar_tarea_semanal':
                         editar_tarea_semanal(format(datos["id"]), format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["dias"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]))
+                        dato = 'ok'
+                        connection.sendall(dato.encode())
+                    # editar una tarea indpendiente con el id
+                    if codigo == 'editar_tarea_independiente':
+                        editar_tarea_independiente(format(datos["id"]), format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["fecha"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]))
                         dato = 'ok'
                         connection.sendall(dato.encode())
                 if data: 
