@@ -129,7 +129,7 @@ def tareas_test():
     return render_template("tareas.html")
 
 #Tareas agregar tarea
-@app.route('/add_tarea_semanal', methods=['GET','POST'])
+@app.route('/add_tareas', methods=['GET','POST'])
 @login_required
 def add_tarea_semanal():
     from aplicacion.models import Equipo
