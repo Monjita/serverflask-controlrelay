@@ -728,6 +728,27 @@
             validacion = 1;
         }
 
+        var fecha_format = moment(fecha).format("MM DD YY");
+        var hoy_format = moment().format("MM DD YY");
+        var hora_actual = moment().format("HH:mm");
+
+        if(fecha_format < hoy_format){
+            Swal.fire({
+                icon: 'error',
+                title: 'La fecha no puede ser anterior a la fecha actual.',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora < hora_actual){
+            Swal.fire({
+                icon: 'error',
+                title: 'La hora no puede ser anterior a la hora actual.',
+                //text: '',
+            });
+            validacion = 1;
+        }
+
         queryObj = {
             ip: ip_rasberry,
             id: id,
@@ -735,6 +756,8 @@
             nombre_tarea: nombre_tarea,
             pin: pin,
             fecha: fecha,
+            dia: moment(fecha).format("DD"),
+            mes: moment(fecha).format("MM"),
             hora: hora,
             estatus: estatus == true ? 1 : 0,
             logica: logica,
@@ -1072,17 +1095,6 @@
             validacion = 1;
         }
 
-        queryObj = {
-            ip: ip_rasberry,
-            codigo: 'add_tarea_independiente',
-            nombre_tarea: nombre_tarea,
-            pin: pin,
-            fecha: fecha,
-            hora: hora,
-            estatus: estatus == true ? 1 : 0,
-            logica: logica,
-        };
-
         var fecha_format = moment(fecha).format("MM DD YY");
         var hoy_format = moment().format("MM DD YY");
         var hora_actual = moment().format("HH:mm");
@@ -1090,21 +1102,35 @@
         if(fecha_format < hoy_format){
             Swal.fire({
                 icon: 'error',
-                title: 'La fecha no puede ser anterior a la fecha actual',
+                title: 'La fecha no puede ser anterior a la fecha actual.',
                 //text: '',
             });
             validacion = 1;
         }
-        if(hora < hora_actual){
+        if(hora <= hora_actual){
             Swal.fire({
                 icon: 'error',
-                title: 'La hora no puede ser anterior a la hora actual',
+                title: 'La hora no puede ser anterior a la hora actual.',
                 //text: '',
             });
             validacion = 1;
         }
 
-        if(validacion == 90){
+        queryObj = {
+            ip: ip_rasberry,
+            codigo: 'add_tarea_independiente',
+            nombre_tarea: nombre_tarea,
+            pin: pin,
+            fecha: fecha,
+            dia: moment(fecha).format("DD"),
+            mes: moment(fecha).format("MM"),
+            hora: hora,
+            estatus: estatus == true ? 1 : 0,
+            logica: logica,
+        };
+
+        //console.log(queryObj);
+        if(validacion == 0){
             //console.log(queryObj);
             axios.post('/add_tareas', queryObj).then(
                     (response) => {
