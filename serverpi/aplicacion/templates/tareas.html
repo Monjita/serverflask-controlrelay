@@ -264,8 +264,8 @@
                         <span>Hora</span>
                     </div>
                     <div class="floating px-1">
-                        <input class="text-center form-control form-control-sm rounded-0 bg-light" id="tarea_fecha" type="date"  required>
-                        <input value="0" style="display: none;">
+                        <input class="text-center form-control form-control-sm rounded-0 bg-light" id="tarea_fecha" type="date" required>
+                        <input value="0" style="display: none;" >
                     <span>Fecha de ejecución</span>
                 </div>
                 </div>
@@ -429,7 +429,12 @@
                             searchable: false,
                         },
                         {
-                            data: 'Fecha'
+                            data: 'Fecha',
+                            render: function(data, type, row){
+                                var fecha = data;
+                                var fecha = moment(fecha).format("DD/MM/YYYY");
+                                return '<div><label>'+fecha+'</label><input value="'+data+'" style="display: none;"></div>';
+                            },
                         },
                         {
                             data: 'Hora',
@@ -556,7 +561,7 @@
         var nombre_tarea = cols[0].innerText;
         var nombre_rele = cols[1].innerText;
         var pin = cols[2].innerText;
-        var fecha = cols[3].innerText;
+        var fecha = cols[3].children[0].children[1].value;
         var hora = cols[4].innerText;
         var estatus = cols[5].children[0].children[0].children[0].checked;
         var logica = cols[6].children[0].children[1].value;
