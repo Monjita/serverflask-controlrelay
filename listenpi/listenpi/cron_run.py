@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, update
 from sqlalchemy.orm import relationship
 
 #Acceso a la base de datos
-engine = create_engine('sqlite:////home/pi/listenpi/listenpi/dbase.db', echo = True)
+engine = create_engine('sqlite:////home/pi/listenpi/listenpi/dbase.db')
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 

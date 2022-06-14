@@ -147,10 +147,6 @@ class Tareas_ind(Base):
             'Logica': self.Logica_rele,            
         }
 
-# from sqlalchemy.orm import sessionmaker
-# Session = sessionmaker(bind = engine)
-# session = Session()
-
 #commit configuracion
 def commitconfig(d_ip, d_puerto):
     a_rasp = session.query(Configuracion).filter(Configuracion.id == 1).one()
@@ -246,7 +242,6 @@ def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
     session.commit()
 
     tarea = session.query(Tareas_sem).filter(Tareas_sem.Nombre_tarea == str(nombre)).one()
-
     cron = CronTab(user='pi')
     job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(tarea.id)) #pin, estatus, logica
     tiempo = str(hora).split(":")
@@ -255,12 +250,10 @@ def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
     time_dias = str(dias).split(",")
     array = []
     i=0
-
     for dia in time_dias:
         if int(dia) == 1:
             array.append(i)
         i=i+1
-    
     str_dias = ""
     i=0
     for ele in array:
@@ -274,7 +267,7 @@ def add_tarea_semanal(nombre, hora, dias, pin, estatus, logica):
     cron.write()
 
 #agregar tarea independiente en la bd
-def add_tarea_independiente(nombre, hora, fecha, pin, estatus, logica):
+def add_tarea_independiente(nombre, hora, fecha, pin, estatus, logica, dia, mes):
     from crontab import CronTab
     rele = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
     tabla = 'tareas_ind'
@@ -282,6 +275,16 @@ def add_tarea_independiente(nombre, hora, fecha, pin, estatus, logica):
     valores = (str(nombre), str(fecha), str(hora), str(rele.Nombre), str(pin), estatus, logica)
     session.execute(f"INSERT INTO {tabla} {columnas} VALUES {valores}")
     session.commit()
+
+    tarea = session.query(Tareas_ind).filter(Tareas_ind.Nombre_tarea == str(nombre)).one()
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='independiente_'+str(tarea.id)) #pin, estatus, logica
+    tiempo = str(hora).split(":")
+    cron_hora = tiempo[0]
+    cron_min = tiempo[1]
+
+    job.setall(str(cron_min)+' '+str(cron_hora)+' '+str(dia)+' '+str(mes)+' *')
+    cron.write()
 
 #editar tarea semanal en la bd
 def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
@@ -302,11 +305,6 @@ def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
     job_ant = my_cron.find_comment('semanal_'+str(id))
     my_cron.remove(job_ant)
     my_cron.write()
-    # for job in my_cron:
-    #     if job.comment == 'semanal_'+str(id):
-    #         my_cron.remove(job)
-    #         my_cron.write()
-
     cron = CronTab(user='pi')
     job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(id)) #pin, estatus, logica
     tiempo = str(hora).split(":")
@@ -315,7 +313,6 @@ def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
     time_dias = str(dias).split(",")
     array = []
     i=0
-
     for dia in time_dias:
         if int(dia) == 1:
             array.append(i)
@@ -334,7 +331,7 @@ def editar_tarea_semanal(id, nombre, hora, dias, pin, estatus, logica):
     cron.write()
     
 #editar tarea independiente en la bd
-def editar_tarea_independiente(id, nombre, hora, fecha, pin, estatus, logica):
+def editar_tarea_independiente(id, nombre, hora, fecha, pin, estatus, logica, dia, mes):
     from crontab import CronTab
     rele = session.query(Relevadores).filter(Relevadores.Pin == pin).one()
     tarea = session.query(Tareas_ind).filter(Tareas_ind.id == id).one()
@@ -348,10 +345,21 @@ def editar_tarea_independiente(id, nombre, hora, fecha, pin, estatus, logica):
     tarea.Logica_rele = int(logica)
     session.commit()
 
-    
+    my_cron = CronTab(user='pi')
+    job_ant = my_cron.find_comment('independiente_'+str(id))
+    my_cron.remove(job_ant)
+    my_cron.write()
 
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='independiente_'+str(tarea.id)) #pin, estatus, logica
+    tiempo = str(hora).split(":")
+    cron_hora = tiempo[0]
+    cron_min = tiempo[1]
 
-#borrar tarea
+    job.setall(str(cron_min)+' '+str(cron_hora)+' '+str(dia)+' '+str(mes)+' *')
+    cron.write()
+
+#borrar tarea semanal
 def borrar_tarea(id):
     from crontab import CronTab
     tarea = session.query(Tareas_sem).filter(Tareas_sem.id == id).one()
@@ -359,25 +367,17 @@ def borrar_tarea(id):
     job = my_cron.find_comment('semanal_'+str(tarea.id))
     my_cron.remove(job)
     my_cron.write()
-    # for job in my_cron:
-    #     if job.comment == 'semanal_'+str(tarea.id):
-    #         my_cron.remove(job)
-    #         my_cron.write()
     session.delete(tarea)
     session.commit()
 
-#borrar tarea
+#borrar tarea independiente
 def borrar_tarea_independiente(id):
     from crontab import CronTab
     tarea = session.query(Tareas_ind).filter(Tareas_ind.id == id).one()
-    # my_cron = CronTab(user='pi')
-    # job = my_cron.find_comment('semanal_'+str(tarea.id))
-    # my_cron.remove(job)
-    # my_cron.write()
-    # for job in my_cron:
-    #     if job.comment == 'semanal_'+str(tarea.id):
-    #         my_cron.remove(job)
-    #         my_cron.write()
+    my_cron = CronTab(user='pi')
+    job = my_cron.find_comment('independiente_'+str(tarea.id))
+    my_cron.remove(job)
+    my_cron.write()
     session.delete(tarea)
     session.commit()
     
@@ -399,7 +399,6 @@ def inicio():
                 os.system('gpio -g write '+str(row.Pin)+' 1')
             #os.system('gpio -g write '+str(row.Pin)+' 0')
             
-    
 #cambio de nombre y/o pin
 def rename_relay(nameAnt, pinAnt, nameNew, pinNew):
     bandera = 0
@@ -567,7 +566,7 @@ def conexion():
                         connection.sendall(dato.encode())
                     # agregar una nueva tarea independiente
                     if codigo == 'add_tarea_independiente':
-                        add_tarea_independiente(format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["fecha"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]))
+                        add_tarea_independiente(format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["fecha"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]), format(datos["dia"]), format(datos["mes"]))
                         dato = 'ok'
                         connection.sendall(dato.encode())
                     # editar una tarea semanal con el id
@@ -577,7 +576,7 @@ def conexion():
                         connection.sendall(dato.encode())
                     # editar una tarea indpendiente con el id
                     if codigo == 'editar_tarea_independiente':
-                        editar_tarea_independiente(format(datos["id"]), format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["fecha"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]))
+                        editar_tarea_independiente(format(datos["id"]), format(datos["nombre_tarea"]), format(datos["hora"]), format(datos["fecha"]), format(datos["pin"]), format(datos["estatus"]), format(datos["logica"]), format(datos["dia"]), format(datos["mes"]) )
                         dato = 'ok'
                         connection.sendall(dato.encode())
                 if data: 
