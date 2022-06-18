@@ -71,6 +71,10 @@ def test():
 def index():
     return render_template('index.html')
 
+@app.route('/favicon.ico')
+def favicon():
+    return 'dummy', 200
+
 # Comandos
 @app.route('/comandos')
 @login_required
@@ -118,11 +122,82 @@ def paramiko():
         return 'ok'
     return format(dato)
 
-#Tareas programadas test
-@app.route('/tareas_test', methods=['GET','POST'])
+#Cambios en tareas
+@app.route('/cambios_tareas', methods=['GET','POST'])
 @login_required
-def tareas_test():
-    return render_template("tareas.html")
+def add_tarea_semanal():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.json['ip']).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            message = json.dumps(request.json)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            dato = sock.recv(1024)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return dato
+    
+#Consulta de tareas semanales
+@app.route('/tareas_semanales', methods=['GET','POST'])
+@login_required
+def tareas_semanales():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.args.get('ip')).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            msg = {'codigo': 'tareas_sem'}
+            message = json.dumps(msg)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            data = sock.recv(1024)
+            data = data.decode("utf-8")
+            # print(data)
+            dato = json.loads(data)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return { 'data': dato }
+
+#Consulta tareas independientes
+@app.route('/tareas_independientes', methods=['GET','POST'])
+@login_required
+def tareas_independientes():
+    from aplicacion.models import Equipo
+    import json
+    import socket
+    dato = None
+    raspberry = Equipo.query.filter_by(IP=request.args.get('ip')).first()
+    if raspberry:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (raspberry.IP, int(raspberry.Puerto))
+        sock.connect(server_address)
+        try:
+            msg = {'codigo': 'tareas_inde'}
+            message = json.dumps(msg)
+            sock.sendall(bytes(message, encoding="utf-8"))
+            data = sock.recv(1024)
+            data = data.decode("utf-8")
+            # print(data)
+            dato = json.loads(data)
+            if dato == 'ok':
+                sock.sendall('')
+        finally:
+            sock.close()
+    return { 'data': dato }
 
 #Tareas programadas
 @app.route('/tareas/<id>', methods=['GET','POST'])
@@ -140,14 +215,14 @@ def tareas(id):
         server_address = (raspberry.IP, int(raspberry.Puerto))
         sock.connect(server_address)
         try:
-            msg = {'codigo': 'estatus_relay'}
+            msg = {'codigo': 'reles_tareas'}
             #data = json.dumps(msg)
             message = json.dumps(msg)
             sock.sendall(bytes(message, encoding="utf-8"))
             data = sock.recv(1024)
             data = data.decode("utf-8")
             dato = json.loads(data)
-            if data == 'ok':
+            if dato == 'ok':
                 sock.sendall('')
         finally:
             sock.close()
@@ -348,13 +423,6 @@ def actualizar_parametros():
     else: 
         dato = 'error'
     return jsonify({"estatus" : format(dato) })
-    #return jsonify({"codigo" : request.json['codigo']
-     #               ,"ip actual" : request.json['ip_a'],
-      #              "puerto actual" : request.json['puerto_a'],
-       #             "ip nuevo" : request.json['ip_n'],
-        #            "puerto nuevo" : request.json['puerto_n'],
-         #           })
-    
 
 # Anexar nuevos dispositivos
 @app.route('/raspberrynew', methods=["get", "post"])
@@ -440,83 +508,6 @@ def raspberrydelete(id):
     return render_template("raspberrydelete.html", form=form, raspberry=raspberry)
 
 ###########################################################
-
-# @app.route('/categoria')
-# @app.route('/categoria/<id>')
-# @login_required
-# def inicio(id='0'):
-#     from aplicacion.models import Articulos, Categorias
-#     categoria = Categorias.query.get(id)
-#     if id == '0':
-#         articulos = Articulos.query.all()
-#     else:
-#         articulos = Articulos.query.filter_by(CategoriaId=id)
-#     categorias = Categorias.query.all()
-#     return render_template("inicio.html", articulos=articulos,
-#                            categorias=categorias, categoria=categoria)
-
-
-# @app.route('/categorias')
-# @login_required
-# def categorias():
-#     from aplicacion.models import Categorias
-#     categorias = Categorias.query.all()
-#     return render_template("categorias.html", categorias=categorias)
-
-
-# @app.route('/categorias/new', methods=["get", "post"])
-# @login_required
-# def categorias_new():
-#     from aplicacion.models import Categorias
-#     # Control de permisos
-#     if not current_user.is_admin():
-#         abort(404)
-#     form = FormCategoria(request.form)
-#     if form.validate_on_submit():
-#         cat = Categorias(nombre=form.nombre.data)
-#         db.session.add(cat)
-#         db.session.commit()
-#         return redirect(url_for("categorias"))
-#     else:
-#         return render_template("categorias_new.html", form=form)
-
-
-# @app.route('/categorias/<id>/edit', methods=["get", "post"])
-# @login_required
-# def categorias_edit(id):
-#     from aplicacion.models import Categorias
-#     # Control de permisos
-#     if not current_user.is_admin():
-#         abort(404)
-#     cat = Categorias.query.get(id)
-#     if cat is None:
-#         abort(404)
-#     form = FormCategoria(request.form, obj=cat)
-#     if form.validate_on_submit():
-#         form.populate_obj(cat)
-#         db.session.commit()
-#         return redirect(url_for("categorias"))
-#     return render_template("categorias_new.html", form=form)
-
-
-# @app.route('/categorias/<id>/delete', methods=["get", "post"])
-# @login_required
-# def categorias_delete(id):
-#     from aplicacion.models import Categorias
-#     # Control de permisos
-#     if not current_user.is_admin():
-#         abort(404)
-#     cat = Categorias.query.get(id)
-#     if cat is None:
-#         abort(404)
-#     form = FormSINO()
-#     if form.validate_on_submit():
-#         if form.si.data:
-#             db.session.delete(cat)
-#             db.session.commit()
-#         return redirect(url_for("categorias"))
-#     return render_template("categorias_delete.html", form=form, cat=cat)
-
 
 # @app.route('/articulos/new', methods=["get", "post"])
 # @login_required

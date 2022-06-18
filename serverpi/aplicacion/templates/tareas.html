@@ -1,222 +1,297 @@
-{% extends "base.html" %}
-{% block title %}Tareas{% endblock %}
-{% block contenido %}
+{% extends "base.html" %} {% block title %}Tareas{% endblock %} {% block contenido %}
 <div class="container">
     <div class="row d-flex justify-content-center ">
         <div class="my-2">
-         PENDIENTE OBTENER DATOS DE LOS RELEVADORES
-            <!-- <h5 class="form-signin-heading">Dispositivo: <span class="text-danger"></span></h5> -->
+            <h4>TAREAS RASPBERRY PI: <span class="text-danger"> {{raspberry.Nombre}}</span></h4>
         </div>
     </div>
-    <div class="row d-flex justify-content-center mt-2">
-        <ul class="nav nav-pills " id="myTab" role="tablist">
+    <div class="row d-flex justify-content-center my-3">
+        <ul class="nav nav-tabs " id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active text-sm" href="#tareas1" data-toggle="tab" role="tab" id="tab_tareas1" aria-selected="true" >Tareas semanales</a>
+                <a class="nav-link active text-sm font-weight-bold" href="#tareas1" data-toggle="tab" role="tab" id="tab_tareas1" aria-selected="true">Tareas semanales</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-sm" href="#tareas2" data-toggle="tab" role="tab" id="tab_tareas2" aria-selected="false">Tareas independientes</a>
+                <a class="nav-link text-sm font-weight-bold" href="#tareas2" data-toggle="tab" role="tab" id="tab_tareas2" aria-selected="false">Tareas independientes</a>
             </li>
         </ul>
     </div>
     <div class="row d-flex justify-content-center mt-4">
         <div class="tab-content w-100" id="pills-tabContent" role="tabpanel">
-            <div id="tareas1" class="tab-pane fade show active" >
-                <div class="d-flex flex-column">
-                    <div class="my-2">
-                        <button class="btn btn-sm btn-primary">Nueva tarea</button>
+            <div id="tareas1" class="tab-pane fade show active">
+                <div class="d-flex justify-content-center justify-content-sm-start  my-3 ">
+                    <button class="btn btn-sm btn-success font-weight-bold mr-3" onclick="nueva_tarea()"><i class="far fa-calendar-plus"></i>&nbsp;&nbsp;Nueva tarea</button>
+                    <div class="floating px-1 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                        <select class="form-control form-control-sm text-sm" onchange="buscar_semana(this.value)">
+                            <option hidden disabled selected value="#">Selecciona un relevador</option>
+                            <option value="all">Todos los relevadores</option>
+                            {% for rele in reles %}
+                                <option value="{{rele.Nombre}}" >{{rele.Nombre}} - Pin: {{rele.Pin}}</option>
+                            {% endfor %}
+                        </select>
+                        <span>Filtrar por relevador</span>
                     </div>
-                    
-                    <div class="d-flex flex-row mt-2">
-
-                        <div class="d-flex flex-row col-9">
-                            <select class="form-control form-control-sm" id="pin_tarea_programada">
-                                <option hidden disabled selected>Elige un Pin</option>
-                                <option>5</option>
-                            </select>
-                            <input class="form-control form-control-sm mx-2" placeholder="Nombre de la tarea" id="nombre_tarea_programada">
-                            <input type="text" id="hora_programada" class="timepicker form-control form-control-sm text-center"  autocomplete="off" placeholder="Selecciona la hora">
-                        </div>
-
-                        <div class="d-flex justify-content-between col-3">
-
-                            <div class="d-flex">
-                                <div class="mx-2 font-weight-bold">
-                                    Estatus:
-                                </div>
-                                <div class="" style="position: relative; margin-top: 5px;">
-                                    <label class="switch_rele">
-                                        <input type="checkbox">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="d-flex">
-                                <div class="ml-2 font-weight-bold">
-                                    Polaridad:
-                                </div>
-                                <div class="" style="position: relative; margin-top: 0px;">
-                                    <button onclick="polaridad(this)" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="far fa-circle"></i></button>
-                                    <input type="number" value="0" id="polaridad_nuevo" style="display: none;">
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="d-flex justify-content-center mt-3 ml-3">
-
-                        <table class="table table-sm m-0 p-0">
-                            <tr>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Domingo
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Lunes
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Martes
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Miercoles
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Jueves
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Viernes
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex">
-                                        <div class="" style="margin-top: 2px;">
-                                            <label class="switch_rele">
-                                                <input type="checkbox">
-                                                <span class="slider slider-primary round"></span>
-                                            </label>
-                                        </div>
-                                        <div class="text-sm mx-2">
-                                            Sabado
-                                        </div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="d-flex justify-content-center">
-                                        <button class="btn btn-sm btn-success" style="margin-top: -7px;">Añadir Tarea</button>
-                                    </div>
-                                </th>
-                            </tr>
-                        </table>
-                        
-                    </div>
-
-                    <!-- <div class="d-flex flex-row">
-                        <div class="d-flex">
-                            <div class="mx-2 font-weight-bold">
-                                Estatus:
-                            </div>
-                            <div class="" style="margin-top: 0px;">
-                                <label class="switch_rele">
-                                    <input type="checkbox" >
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="ml-2 font-weight-bold">
-                                Polaridad:
-                            </div>
-                            <button onclick="polaridad()" value="0" class="invertir text-primary valor-logica" style="border:none;background:none; cursor:pointer;"><i class="far fa-circle" style="padding-top: 0px;"></i></button>
-                        </div>
-                        <div class="d-flex">
-                            <button class="btn btn-sm btn-success">Añadir Tarea</button>
-                        </div>
-                    </div> -->
-
                 </div>
-
-                <div class="d-flex mt-3 justify-content-center w-100">
-                    <table class="table table-sm" id="tareas" width="100%">
-                        <thead>
-                            <tr>
+                <div class=" mt-3 table-responsive">
+                    <table class="table table-sm table-reles " id="tareas" style="background-color: white; width: 100% !important;">
+                        <thead class="table-dark text-sm">
+                            <tr width="100%">
+                                <th >Nombre de la tarea</th>
+                                <th>Nombre del relevador</th>
                                 <th>Pin</th>
-                                <th>Estatus actual</th>
-                                <!-- <th>Nuevo estatus</th> -->
-                                <th>Hora Programada</th>
+                                <th width="15%">Dias</th>
+                                <th>Hora</th>
+                                <th>Acción</th>
+                                <th>Lógica</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            
+                        <tbody class="text-sm">
+
                         </tbody>
                     </table>
                 </div>
-
             </div>
-
             <div id="tareas2" class="tab-pane fade">
-                TAREAS INDEPENDIENTES
+                <div class="d-flex justify-content-center justify-content-sm-start  my-3 ">
+                    <button class="btn btn-sm btn-success font-weight-bold mr-3" onclick="nueva_tarea_independiente()"><i class="far fa-calendar-plus"></i>&nbsp;&nbsp;Nueva tarea</button>
+                    <!-- <button class="btn btn-sm btn-success font-weight-bold mr-3" ><i class="far fa-calendar-plus"></i>&nbsp;&nbsp;test</button> -->
+                    <div class="floating px-1 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                        <select class="form-control form-control-sm text-sm" onchange="buscar_independiente(this.value)">
+                            <option hidden disabled selected value="#">Selecciona un relevador</option>
+                            <option value="all">Todos los relevadores</option>
+                            {% for rele in reles %}
+                                <option value="{{rele.Nombre}}" >{{rele.Nombre}} - Pin: {{rele.Pin}}</option>
+                            {% endfor %}
+                        </select>
+                        <span>Filtrar por relevador</span>
+                    </div>
+                </div>
+                <div class=" mt-3 table-responsive">
+                    <table class="table table-sm table-reles " id="tareas_independientes" style="background-color: white; width: 100% !important;">
+                        <thead class="table-dark text-sm">
+                            <tr>
+                                <th>Nombre de la tarea</th>
+                                <th>Nombre del relevador</th>
+                                <th>Pin</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Acción</th>
+                                <th>Lógica</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_tarea_semanal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex">
+                <div class="d-flex justify-content-center w-100">
+                    <div>
+                        <h6 class="modal-title" id="titulo_modal_semanal">NUEVA TAREA</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" id="bodyModal">
+                <div class="d-flex flex-row mt-3">
+                    <div class="d-flex flex-row w-100">
+                        <div class="floating px-1">
+                            <select class="form-control form-control-sm text-sm" id="pin_semanal">
+                                <option hidden disabled selected value="#">Selecciona un relevador</option>
+                                {% for rele in reles %}
+                                    <option value="{{rele.Pin}}" >{{rele.Nombre}} - Pin: {{rele.Pin}}</option>
+                                {% endfor %}
+                            </select>
+                            <span>Pin del Relevador</span>
+                        </div>
+                        <div class="floating px-1">
+                            <input class="form-control form-control-sm" id="nombre_semanal" required>
+                            <span>Nombre de la tarea</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row w-100 mt-4">
+                    <div class="floating px-1">
+                        <input type="text" id="hora_semanal" class="timepicker form-control form-control-sm text-center" autocomplete="off" required>
+                        <span>Hora</span>
+                    </div>
+                    <div class="d-flex mx-5">
+                        <div class="floating">
+                            <label class="switch_rele" style="position: relative; margin-top: 7px; margin-left: 3px;">
+                                <input type="checkbox" id="estatus_semanal">
+                                <span class="slider round"></span>
+                            </label>
+                            <span>Estatus</span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="floating" style="width: 100px;">
+                            <button onclick="polaridad(this, 'semanal')" class="invertir text-primary valor-logica" id="logica_semanal" style="border:none;background:none; cursor:pointer;margin-top: 3px; margin-left: 8px;"><i
+                                    class="far fa-circle"></i></button>
+                            <input type="number" value="0" id="polaridad_semanal" style="display: none;">
+                            <span id="tipo_polaridad_semanal" style="margin-left: -25px;">Lógica normal</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mt-2">
+                    <table class="table-sm m-0 p-0">
+                        <tr>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_D" onclick="select_dia('D')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">D</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_D">
+                                </div>
+                            </th>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_L" onclick="select_dia('L')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">L</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_L">
+                                </div>
+                            </th>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_M" onclick="select_dia('M')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">M</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_M">
+                                </div>
+                            </th>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_Mi" onclick="select_dia('Mi')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">M</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_Mi">
+                                </div>
+                            </th>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_J" onclick="select_dia('J')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">J</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_J">
+                                </div>
+                            </th>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_V" onclick="select_dia('V')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">V</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_V">
+                                </div>
+                            </th>
+                            <th class="px-0 mx-0 px-sm-1 mx-sm-1">
+                                <div class="d-flex">
+                                    <button  class="invertir text-danger valor-logica" id="dia_S" onclick="select_dia('S')"  style="border:none;background:none; cursor:pointer;">
+                                        <span class="fa-stack" style="vertical-align: top;">
+                                            <i class="far fa-circle fa-stack-2x" style="font-size: 25px; padding-top:4px;"></i>
+                                            <span class="font-weight-bold" style="font-size: medium; padding-left: 0px; ">S</span>
+                                        </span>
+                                    </button>
+                                    <input value="0" type="number" style="display: none;" id="value_S">
+                                </div>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center" id="btn_accion_semanal">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_tarea_independiente" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-flex">
+                <div class="d-flex justify-content-center w-100">
+                    <div>
+                        <h6 class="modal-title" id="titulo_modal_independiente">NUEVA TAREA</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" id="bodyModal">
+                <div class="d-flex flex-row mt-3">
+                    <div class="d-flex flex-row w-100">
+                        <div class="floating px-1">
+                            <select class="form-control form-control-sm text-sm" id="pin_independiente">
+                                <option hidden disabled selected value="#">Selecciona un relevador</option>
+                                {% for rele in reles %}
+                                    <option value="{{rele.Pin}}" >{{rele.Nombre}} - Pin: {{rele.Pin}}</option>
+                                {% endfor %}
+                            </select>
+                            <span>Pin del Relevador</span>
+                        </div>
+                        <div class="floating px-1">
+                            <input class="form-control form-control-sm" id="nombre_independiente" required>
+                            <span>Nombre de la tarea</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row w-100 mt-4">
+                    <div class="floating px-1">
+                        <input type="text" id="hora_independiente" class="timepicker form-control form-control-sm text-center" autocomplete="off" required>
+                        <span>Hora</span>
+                    </div>
+                    <div class="floating px-1">
+                        <input class="text-center form-control form-control-sm rounded-0 bg-light" id="tarea_fecha" type="date" required>
+                        <input value="0" style="display: none;" >
+                    <span>Fecha de ejecución</span>
+                </div>
+                </div>
+                <div class="d-flex justify-content-center mt-4 mb-0 pb-0">
+                    <div class="d-flex mx-5">
+                        <div class="floating">
+                            <label class="switch_rele" style="position: relative; margin-top: 7px; margin-left: 3px;">
+                                <input type="checkbox" id="estatus_independiente">
+                                <span class="slider round"></span>
+                            </label>
+                            <span>Estatus</span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="floating" style="width: 100px;">
+                            <button onclick="polaridad(this, 'independiente')" class="invertir text-primary valor-logica" id="logica_independiente" style="border:none;background:none; cursor:pointer;margin-top: 3px; margin-left: 8px;"><i
+                                    class="far fa-circle"></i></button>
+                            <input type="number" value="0" id="polaridad_independiente" style="display: none;">
+                            <span id="tipo_polaridad_independiente" style="margin-left: -25px;">Lógica normal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center" id="btn_accion_independiente">
+                
+            </div>
         </div>
     </div>
 </div>
@@ -231,47 +306,864 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 
-<script type="text/javascript">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js" integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    function polaridad(item){
-        if(document.getElementById("polaridad_nuevo").value == 0){
-            item.innerHTML = '<i class="fas fa-circle"></i>';
-            document.getElementById("polaridad_nuevo").value = 1;
+<script type="text/javascript">
+    var table;
+    var table_ind;
+    var ip_rasberry = '{{ raspberry.IP }}';
+    
+    $(function() {
+
+        table = $('#tareas').DataTable({
+                dom: '<"top"l>rt<"bottom"ip><"clear">',
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json",
+                    },
+                ajax: {
+                    url: '/tareas_semanales',
+                    type: 'GET',
+                    data: {
+                        ip: ip_rasberry
+                    }
+                },
+                order: [[2, 'asc']],
+                columns: [{
+                        data: 'Nombre_tarea',
+                        searchable: false,
+                        },
+                        {
+                            data: 'Nombre',
+                            orderable: false,
+                        },
+                        {
+                            data: 'Pin',
+                            searchable: false,
+                        },
+                        {
+                            data: 'Dias',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                var dias = data.split(',');
+                                var d = dias[0] == 1 ? '<span class="text-primary font-weight-bold"">D</span>' : '<div><span class="text-danger font-weight-bold"">D</span>';
+                                d += dias[1] == 1 ? '<span class="text-primary font-weight-bold"">&nbsp;&nbsp;L</span>' : '<span class="text-danger font-weight-bold"">&nbsp;&nbsp;L</span>';
+                                d += dias[2] == 1 ? '<span class="text-primary font-weight-bold"">&nbsp;&nbsp;M</span>' : '<span class="text-danger font-weight-bold"">&nbsp;&nbsp;M</span>';
+                                d += dias[3] == 1 ? '<span class="text-primary font-weight-bold"">&nbsp;&nbsp;Mi</span>' : '<span class="text-danger font-weight-bold"">&nbsp;&nbsp;Mi</span>';
+                                d += dias[4] == 1 ? '<span class="text-primary font-weight-bold"">&nbsp;&nbsp;J</span>' : '<span class="text-danger font-weight-bold"">&nbsp;&nbsp;J</span>';
+                                d += dias[5] == 1 ? '<span class="text-primary font-weight-bold"">&nbsp;&nbsp;V</span>' : '<span class="text-danger font-weight-bold"">&nbsp;&nbsp;V</span>';
+                                d += dias[6] == 1 ? '<span class="text-primary font-weight-bold"">&nbsp;&nbsp;S</span>' : '<span class="text-danger font-weight-bold"">&nbsp;&nbsp;S</span>';
+                                return '<div class="">' + d + '<input id="total_dias_'+row["ID"]+'" value="'+data+'" style="display:none;"></div';
+                            },
+                        },
+                        {
+                            data: 'Hora',
+                        },
+                        {
+                            data: 'Estatus',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                if (data == true) {
+                                    return '<div class="d-flex"><label class="switch_rele" style="position: relative; margin-top: 1px; margin-left: 0px;">'
+                                            +'<input type="checkbox" checked="on" disabled>'
+                                            +'<span class="slider round"></span>'
+                                            +'</label></div>';
+                                }
+                                else {
+                                    return '<div class="d-flex"><label class="switch_rele" style="position: relative; margin-top: 1px; margin-left: 0px;">'
+                                        +'<input type="checkbox" disabled>'
+                                        +'<span class="slider round"></span>'
+                                        +'</label></div>';
+                                }
+                            }
+                        },
+                        {
+                            data: 'Logica',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                if (data == true) {
+                                    return '<div class="d-flex mr-0 pr-0">'
+                                            +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="fas fa-circle"></i></button><input value="1" style="display:none;">'
+                                            +'<button class="invertir btn btn-sm btn-outline-primary border-0 ml-3" style="border:none; margin-top: -6px;" onclick="editar_tarea_semanal(this, '+row["ID"]+')"><i class="fas fa-edit"></i></button>'
+                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                        +'</div>';
+                                }
+                                else{
+                                    return '<div class="d-flex mr-0 pr-0">'
+                                            +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="far fa-circle"></i></button><input value="0" style="display:none;">'
+                                            +'<button class="invertir btn btn-sm btn-outline-primary border-0 ml-3" style="border:none; margin-top: -6px;" onclick="editar_tarea_semanal(this, '+row["ID"]+')"><i class="fas fa-edit"></i></button>'
+                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                        +'</div>';
+                                }
+                            }
+                        },
+                    ],
+                });
+        
+                table_ind = $('#tareas_independientes').DataTable({
+                    dom: '<"top"l>rt<"bottom"ip><"clear">',
+                    language: {
+                        url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json",
+                        },
+                    ajax: {
+                        url: '/tareas_independientes',
+                        type: 'GET',
+                        data: {
+                            ip: ip_rasberry
+                        }
+                    },
+                    order: [[2, 'asc']],
+                    columns: [{
+                        data: 'Nombre_tarea',
+                        searchable: false,
+                        },
+                        {
+                            data: 'Nombre',
+                            orderable: false,
+                        },
+                        {
+                            data: 'Pin',
+                            searchable: false,
+                        },
+                        {
+                            data: 'Fecha',
+                            render: function(data, type, row){
+                                var fecha = data;
+                                var fecha = moment(fecha).format("DD/MM/YYYY");
+                                return '<div><label>'+fecha+'</label><input value="'+data+'" style="display: none;"></div>';
+                            },
+                        },
+                        {
+                            data: 'Hora',
+                        },
+                        {
+                            data: 'Estatus',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                if (data == true) {
+                                    return '<div class=""><label class="switch_rele" style="position: relative; margin-top: 1px; margin-left: 0px;">'
+                                            +'<input type="checkbox" checked="on" disabled>'
+                                            +'<span class="slider round"></span>'
+                                            +'</label></div>';
+                                }
+                                else {
+                                    return '<div class=""><label class="switch_rele" style="position: relative; margin-top: 1px; margin-left: 0px;">'
+                                        +'<input type="checkbox" disabled>'
+                                        +'<span class="slider round"></span>'
+                                        +'</label></div>';
+                                }
+                            }
+                        },
+                        {
+                            data: 'Logica',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                if (data == true) {
+                                    return '<div class="d-flex d-sm-block mr-0 pr-0">'
+                                            +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="fas fa-circle"></i></button><input value="1" style="display:none;">'
+                                            +'<button class="invertir btn btn-sm btn-outline-primary border-0 ml-3" style="border:none; margin-top: -6px;" onclick="editar_tarea_independiente(this, '+row["ID"]+')"><i class="fas fa-edit"></i></button>'
+                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea_independiente('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                        +'</div>';
+                                }
+                                else{
+                                    return '<div class="d-flex d-sm-block mr-0 pr-0">'
+                                            +'<button class="invertir text-primary ml-2" style="border:none;background:none; cursor:pointer;margin-top: -6px; margin-left: 0px;"><i class="far fa-circle"></i></button><input value="0" style="display:none;">'
+                                            +'<button class="invertir btn btn-sm btn-outline-primary border-0 ml-3" style="border:none; margin-top: -6px;" onclick="editar_tarea_independiente(this, '+row["ID"]+')"><i class="fas fa-edit"></i></button>'
+                                            +'<button class="invertir btn btn-sm btn-outline-danger border-0 ml-3" style="border:none; margin-top: -6px;" onclick="borrar_tarea_independiente('+row["ID"]+')"><i class="fas fa-trash-alt"></i></button>'
+                                        +'</div>';
+                                }
+                            }
+                        },
+                    ],
+                });
+
+    });
+
+    function buscar_semana(data){
+        if(data != "all"){
+    	    table.columns( 1 ).search(data).draw();
         }
         else{
-            document.getElementById("polaridad_nuevo").value = 0;
-            item.innerHTML = '<i class="far fa-circle"></i>';
+            table.columns().search("").draw();
+        }
+	}
+
+    function buscar_independiente(data){
+        if(data != "all"){
+    	    table_ind.columns( 1 ).search(data).draw();
+        }
+        else{
+            table_ind.columns().search("").draw();
+        }
+	}
+
+    function select_dia(dia){
+        if(document.getElementById("value_"+dia).value == 0){
+            document.getElementById("dia_"+dia).classList.remove('text-danger');
+            document.getElementById("dia_"+dia).classList.add('text-primary');
+            document.getElementById("value_"+dia).value = 1;
+        }
+        else{
+            document.getElementById("dia_"+dia).classList.remove('text-primary');
+            document.getElementById("dia_"+dia).classList.add('text-danger');
+            document.getElementById("value_"+dia).value = 0;
         }
     }
 
-    $(function (){
-		tableitems = $('#tareas').DataTable({
-	        info:false,
-	        ordering:true,
-	        paging:false,
-	        destroy: true,
-	        searching:false,
-	        responsive: true,
-	        columns: [
-				{ data:'Pin'},
-				{ data:'Estatus actual'},
-	        	{ data:'Hora programada'},
-			],
-		});
-    });
+    function editar_tarea_semanal(item, id){
+        var row = $(item).parents('tr');
+        var cols = row.find('td');
+        var nombre_tarea = cols[0].innerText;
+        var nombre_rele = cols[1].innerText;
+        var pin = cols[2].innerText;
+        var dias_semana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+        var dias = document.getElementById("total_dias_"+id).value;
+        dias = dias.split(',')
+        dias_semana.forEach(function(dia, index, arr) {
+            if(dias[index] == 1){
+                document.getElementById("dia_"+dia).classList.remove('text-danger');
+                document.getElementById("dia_"+dia).classList.add('text-primary');
+                document.getElementById("value_"+dia).value = 1;
+            }
+            else{
+                document.getElementById("dia_"+dia).classList.remove('text-primary');
+                document.getElementById("dia_"+dia).classList.add('text-danger');
+                document.getElementById("value_"+dia).value = 0;
+            }
+        });
+        var hora = cols[4].innerText;
+        var estatus = cols[5].children[0].children[0].children[0].checked;
+        var logica = cols[6].children[0].children[1].value;
+        document.getElementById('titulo_modal_semanal').innerHTML = 'Editar Tarea: <span class="text-danger">'+nombre_tarea+'</span>';
+        document.getElementById('pin_semanal').value = pin;
+        document.getElementById('nombre_semanal').value = nombre_tarea;
+        document.getElementById('hora_semanal').value = hora;
+        var valor_estatus = document.getElementById('estatus_semanal');
+        var valor_logica = document.getElementById('logica_semanal');
+        var nombre_logica = document.getElementById('tipo_polaridad_semanal');
+        document.getElementById('polaridad_semanal').value = logica;
+        estatus == true ? valor_estatus.checked = true : valor_estatus.checked = false;
+        logica == 1 ? valor_logica.innerHTML = '<i class="fas fa-circle"></i>' : valor_logica.innerHTML = '<i class="far fa-circle"></i>';
+        logica == 1 ? nombre_logica.innerText = 'Logica invertida' : nombre_logica.innerText = 'Logica normal';
+        document.getElementById("btn_accion_semanal").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea('+"'semanal'"+')">Cancelar</button>'
+        +'<button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: 0px; margin-left: 25px;" id="btn_accion_semanal" onclick="cambio_tarea_semanal('+id+')">Realizar cambios</button>';
+        $('#modal_tarea_semanal').modal({backdrop: 'static',keyboard: false});
+    }
 
+    function editar_tarea_independiente(item, id){
+        var row = $(item).parents('tr');
+        var cols = row.find('td');
+        var nombre_tarea = cols[0].innerText;
+        var nombre_rele = cols[1].innerText;
+        var pin = cols[2].innerText;
+        var fecha = cols[3].children[0].children[1].value;
+        var hora = cols[4].innerText;
+        var estatus = cols[5].children[0].children[0].children[0].checked;
+        var logica = cols[6].children[0].children[1].value;
+        document.getElementById('titulo_modal_independiente').innerHTML = 'Editar Tarea: <span class="text-danger">'+nombre_tarea+'</span>';
+        document.getElementById('pin_independiente').value = pin;
+        document.getElementById('nombre_independiente').value = nombre_tarea;
+        document.getElementById('tarea_fecha').value = fecha;
+        document.getElementById('hora_independiente').value = hora;
+        var valor_estatus = document.getElementById('estatus_independiente');
+        var valor_logica = document.getElementById('logica_independiente');
+        var nombre_logica = document.getElementById('tipo_polaridad_independiente');
+        document.getElementById('polaridad_semanal').value = logica;
+        estatus == true ? valor_estatus.checked = true : valor_estatus.checked = false;
+        logica == 1 ? valor_logica.innerHTML = '<i class="fas fa-circle"></i>' : valor_logica.innerHTML = '<i class="far fa-circle"></i>';
+        logica == 1 ? nombre_logica.innerText = 'Logica invertida' : nombre_logica.innerText = 'Logica normal';
+        document.getElementById("btn_accion_independiente").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea('+"'independiente'"+')">Cancelar</button>'
+        +'<button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: 0px; margin-left: 25px;" id="btn_accion_semanal" onclick="cambio_tarea_independiente('+id+')">Realizar cambios</button>';
+        $('#modal_tarea_independiente').modal({backdrop: 'static',keyboard: false});
+    }
     
-	$('.timepicker').timepicker({
-		timeFormat: 'HH:mm',
-		interval: 60,
-		minTime: '0',
-		maxTime: '23:59',
-		defaultTime: '',
-		startTime: '00:00',
-		dynamic: false,
-		dropdown: true,
-		scrollbar: false
-	});
+    function cambio_tarea_semanal(id){
+        var nombre_tarea = document.getElementById("nombre_semanal").value;
+        var pin = document.getElementById("pin_semanal").value;
+        var hora = document.getElementById("hora_semanal").value;
+        var estatus = document.getElementById("estatus_semanal").checked;
+        var logica = document.getElementById("polaridad_semanal").value;
+        var dias_semana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+        var dias = '';
+        dias_semana.forEach(function(dia) {
+            if(dia != 'S'){
+                dias += document.getElementById('value_'+dia).value == 1 ? '1,' : '0,'; 
+            }
+            else{
+                dias += document.getElementById('value_'+dia).value == 1 ? '1' : '0'; 
+            }
+        });
+        var validacion = 0;
+        if(pin == "#"){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un relevador',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(nombre_tarea == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega un nombre a la tarea',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora == "" || !validarhora(hora)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una hora valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(dias == '0,0,0,0,0,0,0'){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un día como mínimo',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        queryObj = {
+            ip: ip_rasberry,
+            id: id,
+            codigo: 'editar_tarea_semanal',
+            nombre_tarea: nombre_tarea,
+            pin: pin,
+            dias: dias,
+            hora: hora,
+            estatus: estatus == true ? 1 : 0,
+            logica: logica,
+        };
+        if(validacion == 0){
+            axios.post('/cambios_tareas', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    table.ajax.reload();
+                    table.clear().draw();
+
+                    document.getElementById("nombre_semanal").value = '';
+                    document.getElementById("pin_semanal").value = '#';
+                    document.getElementById("hora_semanal").value = '';
+                    document.getElementById("estatus_semanal").checked = false;
+                    document.getElementById("polaridad_semanal").value = 0;
+
+                    document.getElementById("polaridad_semanal").value = 0;
+                    document.getElementById("logica_semanal").innerHTML = '<i class="far fa-circle"></i>';
+                    document.getElementById("tipo_polaridad_semanal").innerText = 'Logica normal';
+
+                    dias_semana.forEach(function(dia) {
+                        document.getElementById("dia_"+dia).classList.remove('text-primary');
+                        document.getElementById("dia_"+dia).classList.add('text-danger');
+                        document.getElementById('value_'+dia).value = 0;             
+                    });
+
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Cambios realizados con exito',
+                        showConfirmButton: false,
+                        timer: 1250,
+                    });
+                    $('#modal_tarea_semanal').modal('hide');
+                },
+                (error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ocurrio un error',
+                        //text: '',
+                    });
+                    console.log(error);
+                }
+            );
+        }
+    }
+
+    function cambio_tarea_independiente(id){
+        var nombre_tarea = document.getElementById('nombre_independiente').value;
+        var pin = document.getElementById('pin_independiente').value;
+        var hora = document.getElementById('hora_independiente').value;
+        var estatus = document.getElementById('estatus_independiente').checked;
+        var logica = document.getElementById('polaridad_independiente').value;
+        var fecha = document.getElementById('tarea_fecha').value;
+        var validacion = 0;
+        if(pin == "#"){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un relevador',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(nombre_tarea == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega un nombre a la tarea',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora == "" || !validarhora(hora)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una hora valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(fecha == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una fecha valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        var fecha_format = moment(fecha).format("MM DD YY");
+        var hoy_format = moment().format("MM DD YY");
+        var hora_actual = moment().format("HH:mm");
+        if(fecha_format < hoy_format){
+            Swal.fire({
+                icon: 'error',
+                title: 'La fecha no puede ser anterior a la fecha actual.',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora <= hora_actual){
+            Swal.fire({
+                icon: 'error',
+                title: 'La hora no puede ser anterior a la hora actual.',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        queryObj = {
+            ip: ip_rasberry,
+            id: id,
+            codigo: 'editar_tarea_independiente',
+            nombre_tarea: nombre_tarea,
+            pin: pin,
+            fecha: fecha,
+            dia: moment(fecha).format("DD"),
+            mes: moment(fecha).format("MM"),
+            hora: hora,
+            estatus: estatus == true ? 1 : 0,
+            logica: logica,
+        };
+        if(validacion == 0){
+            axios.post('/cambios_tareas', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    table_ind.ajax.reload();
+                    table_ind.clear().draw();
+                    document.getElementById("nombre_independiente").value = '';
+                    document.getElementById("pin_independiente").value = '#';
+                    document.getElementById("hora_independiente").value = '';
+                    document.getElementById("estatus_independiente").checked = false;
+                    document.getElementById("tarea_fecha").value = '';
+                    document.getElementById("polaridad_independiente").value = 0;
+                    document.getElementById("logica_independiente").innerHTML = '<i class="far fa-circle"></i>';
+                    document.getElementById("tipo_polaridad_independiente").innerText = 'Logica normal';
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Cambios realizados con exito',
+                        showConfirmButton: false,
+                        timer: 1250,
+                    });
+                    $('#modal_tarea_independiente').modal('hide');
+                },
+                (error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ocurrio un error',
+                        //text: '',
+                    });
+                    console.log(error);
+                }
+            );
+        }
+    }
+
+    function polaridad(item, tarea){
+        if(document.getElementById("polaridad_"+tarea).value == 0){
+            item.innerHTML = '<i class="fas fa-circle"></i>';
+            document.getElementById("polaridad_"+tarea).value = 1;
+            document.getElementById("tipo_polaridad_"+tarea).innerText = 'Lógica invertida';
+        } 
+        else{
+            document.getElementById("polaridad_"+tarea).value = 0;
+            item.innerHTML = '<i class="far fa-circle"></i>';
+            document.getElementById("tipo_polaridad_"+tarea).innerText = 'Lógica normal';
+        }
+    }
+
+    function nueva_tarea() {
+        document.getElementById("nombre_semanal").value = '';
+        document.getElementById("pin_semanal").value = '#';
+        document.getElementById("hora_semanal").value = '';
+        document.getElementById("estatus_semanal").checked = false;
+        document.getElementById("polaridad_semanal").value = 0;
+        document.getElementById("logica_semanal").innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById("tipo_polaridad_semanal").innerText = 'Lógica normal';
+        var dias_semana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+        dias_semana.forEach(function(dia) {
+            document.getElementById("dia_"+dia).classList.remove('text-primary');
+            document.getElementById("dia_"+dia).classList.add('text-danger');
+            document.getElementById('value_'+dia).value = 0;
+        });
+        document.getElementById("btn_accion_semanal").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea('+"'semanal'"+')">Cancelar</button>'
+        +'<button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: 0px; margin-left: 25px;" id="btn_accion_semanal" onclick="add_tarea_semanal()">Crear tarea</button>';
+        $('#modal_tarea_semanal').modal({backdrop: 'static',keyboard: false});
+    }
+
+    function nueva_tarea_independiente(){
+        document.getElementById("nombre_independiente").value = '';
+        document.getElementById("pin_independiente").value = '#';
+        document.getElementById("hora_independiente").value = '';
+        document.getElementById("tarea_fecha").value = '';
+        document.getElementById("estatus_independiente").checked = false;
+        document.getElementById("polaridad_independiente").value = 0;
+        document.getElementById("logica_independiente").innerHTML = '<i class="far fa-circle"></i>';
+        document.getElementById("tipo_polaridad_independiente").innerText = 'Lógica normal';
+        document.getElementById("btn_accion_independiente").innerHTML = '<button class="btn btn-sm btn-danger text-sm font-weight-bold" style="margin-top: 0px; margin-left: 0px;" onclick="cancelar_tarea('+"'independiente'"+')">Cancelar</button>'
+        +'<button class="btn btn-sm btn-success text-sm font-weight-bold" style="margin-top: 0px; margin-left: 25px;" id="btn_accion_independiente" onclick="add_tarea_independiente()">Crear tarea</button>';
+        $('#modal_tarea_independiente').modal({backdrop: 'static',keyboard: false});
+    }
+
+    function cancelar_tarea(tarea) {
+        $('#modal_tarea_'+tarea).modal('hide');
+    }
+
+    function borrar_tarea(id){
+        queryObj = {
+            ip: ip_rasberry,
+            id: id,
+            codigo: 'borrar_tarea',
+        };
+        Swal.fire({
+            title: 'Confirmar para eliminar tarea',
+            // text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+            }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post('/cambios_tareas', queryObj).then(
+                    (response) => {
+                        var result = response.data;
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Tarea eliminada',
+                            showConfirmButton: false,
+                            timer: 1250,
+                        });
+                        table.ajax.reload();
+                        table.clear().draw();
+                    },
+                    (error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            //text: '',
+                        });
+                        console.log(error);
+                    }
+                );
+            }
+        });
+    }
+
+    function borrar_tarea_independiente(id){
+        queryObj = {
+            ip: ip_rasberry,
+            id: id,
+            codigo: 'borrar_tarea_independiente',
+        };
+        Swal.fire({
+            title: 'Confirmar para eliminar tarea',
+            // text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+            }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post('/cambios_tareas', queryObj).then(
+                    (response) => {
+                        var result = response.data;
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Tarea eliminada',
+                            showConfirmButton: false,
+                            timer: 1250,
+                        });
+                        table_ind.ajax.reload();
+                        table_ind.clear().draw();
+                    },
+                    (error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            //text: '',
+                        });
+                        console.log(error);
+                    }
+                );
+            }
+        });
+    }
+
+    function add_tarea_semanal() {
+        var nombre_tarea = document.getElementById("nombre_semanal").value;
+        var pin = document.getElementById("pin_semanal").value;
+        var hora = document.getElementById("hora_semanal").value;
+        var estatus = document.getElementById("estatus_semanal").checked;
+        var logica = document.getElementById("polaridad_semanal").value;
+        var dias_semana = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+        var dias = '';
+        dias_semana.forEach(function(dia) {
+            if(dia != 'S'){
+                dias += document.getElementById('value_'+dia).value == 1 ? '1,' : '0,';
+            }
+            else{
+                dias += document.getElementById('value_'+dia).value == 1 ? '1' : '0';
+            }
+        });
+        var validacion = 0;
+        if(pin == "#"){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un relevador',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(nombre_tarea == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega un nombre a la tarea',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora == "" || !validarhora(hora)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una hora valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(dias == '0,0,0,0,0,0,0'){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un día como mínimo',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        queryObj = {
+            ip: ip_rasberry,
+            codigo: 'add_tarea_semanal',
+            nombre_tarea: nombre_tarea,
+            pin: pin,
+            dias: dias,
+            hora: hora,
+            estatus: estatus == true ? 1 : 0,
+            logica: logica,
+        };
+        if(validacion == 0){
+            axios.post('/cambios_tareas', queryObj).then(
+                (response) => {
+                    var result = response.data;
+                    table.ajax.reload();
+                    table.clear().draw();
+                    document.getElementById("nombre_semanal").value = '';
+                    document.getElementById("pin_semanal").value = '#';
+                    document.getElementById("hora_semanal").value = '';
+                    document.getElementById("estatus_semanal").checked = false;
+                    document.getElementById("polaridad_semanal").value = 0;
+                    document.getElementById("logica_semanal").innerHTML = '<i class="far fa-circle"></i>';
+                    document.getElementById("tipo_polaridad_semanal").innerText = 'Lógica normal';
+                    dias_semana.forEach(function(dia) {
+                        document.getElementById("dia_"+dia).classList.remove('text-primary');
+                        document.getElementById("dia_"+dia).classList.add('text-danger');
+                        document.getElementById('value_'+dia).value = 0;
+                    });
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Tarea agregada con exito',
+                        showConfirmButton: false,
+                        timer: 1250,
+                    });
+                    $('#modal_tarea_semanal').modal('hide');
+                },
+                (error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ocurrio un error',
+                        //text: '',
+                    });
+                    console.log(error);
+                }
+            );
+        }
+    }
+
+    function add_tarea_independiente(){
+        var nombre_tarea = document.getElementById("nombre_independiente").value;
+        var pin = document.getElementById("pin_independiente").value;
+        var hora = document.getElementById("hora_independiente").value;
+        var estatus = document.getElementById("estatus_independiente").checked;
+        var logica = document.getElementById("polaridad_independiente").value;
+        var fecha = document.getElementById("tarea_fecha").value;
+        var validacion = 0;
+        if(pin == "#"){
+            Swal.fire({
+                icon: 'error',
+                title: 'Selecciona un relevador',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(nombre_tarea == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega un nombre a la tarea',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora == "" || !validarhora(hora)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una hora valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(fecha == ""){
+            Swal.fire({
+                icon: 'error',
+                title: 'Agrega una fecha valida',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        var fecha_format = moment(fecha).format("MM DD YY");
+        var hoy_format = moment().format("MM DD YY");
+        var hora_actual = moment().format("HH:mm");
+        if(fecha_format < hoy_format){
+            Swal.fire({
+                icon: 'error',
+                title: 'La fecha no puede ser anterior a la fecha actual.',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        if(hora <= hora_actual){
+            Swal.fire({
+                icon: 'error',
+                title: 'La hora no puede ser anterior a la hora actual.',
+                //text: '',
+            });
+            validacion = 1;
+        }
+        queryObj = {
+            ip: ip_rasberry,
+            codigo: 'add_tarea_independiente',
+            nombre_tarea: nombre_tarea,
+            pin: pin,
+            fecha: fecha,
+            dia: moment(fecha).format("DD"),
+            mes: moment(fecha).format("MM"),
+            hora: hora,
+            estatus: estatus == true ? 1 : 0,
+            logica: logica,
+        };
+        if(validacion == 0){
+            axios.post('/cambios_tareas', queryObj).then(
+                    (response) => {
+                        var result = response.data;
+                        table_ind.ajax.reload();
+                        table_ind.clear().draw();
+                        document.getElementById("nombre_independiente").value = '';
+                        document.getElementById("pin_independiente").value = '#';
+                        document.getElementById("hora_independiente").value = '';
+                        document.getElementById("estatus_independiente").checked = false;
+                        document.getElementById("tarea_fecha").value = '';
+                        document.getElementById("polaridad_independiente").value = 0;
+                        document.getElementById("logica_independiente").innerHTML = '<i class="far fa-circle"></i>';
+                        document.getElementById("tipo_polaridad_independiente").innerText = 'Lógica normal';
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Tarea agregada con exito',
+                            showConfirmButton: false,
+                            timer: 1250,
+                        });
+                        $('#modal_tarea_independiente').modal('hide');
+                    },
+                    (error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            //text: '',
+                        });
+                        console.log(error);
+                    }
+                );
+        }
+    }
+
+    function validarhora(hora) {
+        var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])?$/.test(hora);
+        return isValid;
+    }
+
+    function test() {
+        queryObj = {
+            ip: ip_rasberry
+        };
+        axios.get('/test', queryObj).then(
+            (response) => {
+                var result = response.data;
+                console.log(result);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+    }
+
+    $('.timepicker').timepicker({
+        timeFormat: 'HH:mm',
+        interval: 60,
+        minTime: '0',
+        maxTime: '23:59',
+        defaultTime: '',
+        startTime: '00:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: false
+    });
 
 </script>
 
