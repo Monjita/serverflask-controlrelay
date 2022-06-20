@@ -97,8 +97,10 @@ def change_static_eth(ip_address, routers, dns):
 #Acceso a la base de datos
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Table, MetaData
 
 engine = create_engine('sqlite:////home/pi/listenpi/listenpi/dbase.db', echo = True)
+metadata = MetaData(engine)
 Session = sessionmaker(bind = engine)
 session = Session()
 Base = declarative_base()
@@ -304,8 +306,8 @@ def consulta_tareas_sem():
         for dia in dias:
             if dia == "1":
                 str_dias = str_dias+str(dias_sem[i])+", "
-            i=i+1;
-        print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre_tarea, ", Nombre Pin: ", tarea.Pin, ", Dias: ", str_dias, "Hora: ", tarea.Hora, ", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
+            i=i+1
+        print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre_tarea, ", Pin: ", tarea.Pin, ", Dias: ", str_dias, "Hora: ", tarea.Hora, ", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
     print("\n")
     
 #consulta tareas independientes
@@ -317,13 +319,13 @@ def consulta_tareas_ind():
     print("\n")
     for tarea in tareas:
         fecha = str(tarea.Fecha).split('-')
-        print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre, ", Nombre Pin: ", tarea.Nombre_tarea, ", Fecha: ", fecha[2]+"/"+fecha[1]+"/"+fecha[0], ", Hora: ", tarea.Hora, ", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
+        print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre, ", Nombre Pin: ", tarea.Nombre_tarea, ", Fecha: ", fecha[2]+"/"+fecha[1]+"/"+fecha[0], ", Hora: ", tarea.Hora, "Pin: ", tarea.Pin,", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
     print("\n")
 
 #agregar tarea semanal en la bd
 def add_tareas_sem():
     print("\n")
-    print("Crear nueva tarea")
+    print("Crear nueva tarea semanal")
     pin = input("Elige el PIN del relevador: ")
     reles = session.query(Relevadores).all()
     ban = 1
@@ -331,6 +333,7 @@ def add_tareas_sem():
     for rele in reles:
         if rele.Pin == str(pin):
             existe_rele = 1
+            break
 
     while existe_rele == 0:
         print("¡El PIN del relevador no existe!")
@@ -338,6 +341,7 @@ def add_tareas_sem():
         for rele in reles:
             if rele.Pin == str(pin):
                 existe_rele = 1
+                break
     
     nombre_tarea = input("Elige el nombre de la tarea: ")
     dias_sem = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"]
@@ -359,6 +363,17 @@ def add_tareas_sem():
             str_dias = str_dias+"0"
         i = i+1
 
+    print("Define la hora de programación")
+    hora_prog = input("Digita la hora en formato 24Hrs (00 a 23 Hrs y 00 a 59 Min): ")
+    
+    while isTimeFormat(hora_prog) is False:
+        print("Digita una hora valida")
+        hora_prog = input("Digita la hora en formato 24Hrs (00:00 - 23:59 Hrs): ")
+    
+    hora_prog = str(hora_prog).split(":")
+    hora= hora_prog[0] if int(hora_prog[0]) > 9 else "0"+str(int(hora_prog[0]))
+    minuto = hora_prog[1] if int(hora_prog[1]) > 9 else "0"+str(int(hora_prog[1]))
+
     print("Selecciona la accion de la tarea")
     estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
     while estatus is not "0" and estatus is not "1":
@@ -370,18 +385,6 @@ def add_tareas_sem():
     while logica is not "0" and logica is not "1":
          print("Selecciona una opción valida")
          logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
-
-    print("Define la hora de programación")
-    timeformat = "%H:%M"
-    hora_prog = input("Digita la hora en formato 24Hrs (00 a 23 Hrs y 00 a 59 Min): ")
-    
-    while isTimeFormat(hora_prog) is False:
-        print("Digita una hora valida")
-        hora_prog = input("Digita la hora en formato 24Hrs (00:00 - 23:59 Hrs): ")
-    
-    hora_prog = str(hora_prog).split(":")
-    hora= hora_prog[0] if int(hora_prog[0]) > 9 else "0"+str(int(hora_prog[0]))
-    minuto = hora_prog[1] if int(hora_prog[1]) > 9 else "0"+str(int(hora_prog[1]))
     
     print(pin, nombre_tarea, str_dias, hora+":"+minuto, hora, minuto, estatus, logica)
     
@@ -390,6 +393,13 @@ def add_tareas_sem():
 def isTimeFormat(input):
     try:
         time.strptime(input, '%H:%M')
+        return True
+    except ValueError:
+        return False
+
+def isDateFormat(input):
+    try:
+        time.strptime(input, '%d/%m/%Y')
         return True
     except ValueError:
         return False
@@ -428,6 +438,418 @@ def agregar_tarea_sem(nombre, hora, minuto, dias, pin, estatus, logica):
     job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
     cron.write()
 
+#editar tareas semanales
+def editar_tareas_sem():
+    print("\n")
+    print("Editar Tarea")
+    id = input("Elige el ID de la tarea a editar: ")
+    tareas = session.query(Tareas_sem).all()
+    existe_tarea = 0
+    for tarea in tareas:
+        if tarea.id == int(id):
+            existe_tarea = 1
+            break
+    while existe_tarea == 0:
+        print("¡EL ID de la terea no existe!")
+        id = input("Elige el ID de la tarea a editar: ")
+        for tarea in tareas:
+            if tarea.id == int(id):
+                existe_tarea = 1
+                break
+    dias_sem = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S']
+    str_dias = ""
+    i = 0
+    for dia in tarea.Dias:
+            if dia == "1":
+                str_dias = str_dias+str(dias_sem[i])+", "
+            i=i+1
+    print("\n")
+    consultaRelay()
+    print("\n")
+    print("Tarea seleccionada:")
+    print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre_tarea, ", Pin: ", tarea.Pin, ", Dias: ", str_dias, "Hora: ", tarea.Hora, ", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
+    print("\n")
+    pin = input("Elige el PIN del relevador: ")
+    reles = session.query(Relevadores).all()
+    existe_rele = 0
+    for rele in reles:
+        if rele.Pin == str(pin):
+            existe_rele = 1
+            break
+
+    while existe_rele == 0:
+        print("¡El PIN del relevador no existe!")
+        pin = input("Elige el PIN del relevador: ")
+        for rele in reles:
+            if rele.Pin == str(pin):
+                existe_rele = 1
+                break
+    nombre_tarea = input("Elige el nombre de la tarea: ")
+    dias_sem = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"]
+    str_dias = ""
+    i = 0
+    for dia in dias_sem:
+        dia =  input("Seleccionar dia: "+dias_sem[i]+" (SI - s, NO - n) : ")
+        while dia is not "s" and dia is not "n":
+            print("Selecciona una opción valida")
+            print("Escribre s para SI y n para NO")
+            dia =  input("Seleccionar dia "+dias_sem[i]+" (SI - s, NO - n) : ")
+        if dia == "s" and i < 6:
+            str_dias = str_dias+"1,"
+        elif dia == "n" and i < 6:
+            str_dias = str_dias+"0,"
+        elif dia == "s" and i == 6:
+            str_dias = str_dias+"1"
+        elif dia == "n" and i == 6:
+            str_dias = str_dias+"0"
+        i = i+1
+    
+    print("Define la hora de programación")
+    timeformat = "%H:%M"
+    hora_prog = input("Digita la hora en formato 24Hrs (00 a 23 Hrs y 00 a 59 Min): ")
+    
+    while isTimeFormat(hora_prog) is False:
+        print("Digita una hora valida")
+        hora_prog = input("Digita la hora en formato 24Hrs (00:00 - 23:59 Hrs): ")
+    
+    hora_prog = str(hora_prog).split(":")
+    hora= hora_prog[0] if int(hora_prog[0]) > 9 else "0"+str(int(hora_prog[0]))
+    minuto = hora_prog[1] if int(hora_prog[1]) > 9 else "0"+str(int(hora_prog[1]))
+
+    print("Selecciona la accion de la tarea")
+    estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+    while estatus is not "0" and estatus is not "1":
+         print("Selecciona una opción valida")
+         estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+
+    print("Selecciona la logica a emplear")
+    logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    while logica is not "0" and logica is not "1":
+         print("Selecciona una opción valida")
+         logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    
+    print(id, pin, nombre_tarea, str_dias, hora+":"+minuto, hora, minuto, estatus, logica)
+
+    editar_tarea_semanal(id, nombre_tarea, hora, minuto, str_dias, pin, estatus, logica)
+
+def editar_tarea_semanal(id, nombre, hora, minuto, dias, pin, estatus, logica):
+
+    rele = session.query(Relevadores).filter(Relevadores.Pin == pin).one()
+    tarea = session.query(Tareas_sem).filter(Tareas_sem.id == id).one()
+    tarea.Nombre_tarea = str(nombre)
+    # tarea.Fecha = ''
+    tarea.Dias = str(dias)
+    tarea.Hora = str(hora+":"+minuto)
+    tarea.Nombre = str(rele.Nombre)
+    # tarea.Pin = str(pin)
+    tarea.Estatus = int(estatus)
+    tarea.Logica_rele = int(logica)
+    session.commit()
+
+    my_cron = CronTab(user='pi')
+    job_ant = my_cron.find_comment('semanal_'+str(id))
+    my_cron.remove(job_ant)
+    my_cron.write()
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='semanal_'+str(id)) #pin, estatus, logica
+    # tiempo = str(hora).split(":")
+    cron_hora = hora
+    cron_min = minuto
+    time_dias = str(dias).split(",")
+    array = []
+    i=0
+    for dia in time_dias:
+        if int(dia) == 1:
+            array.append(i)
+        i=i+1
+    
+    str_dias = ""
+    i=0
+    for ele in array:
+        if i == 0:
+            str_dias += str(ele)
+        else:
+            str_dias += ','+str(ele)
+        i=i+1
+
+    job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
+    cron.write()
+
+#borrar tarea semanal
+def borrar_tareas_sem():
+    print("\n")
+    print("Borrar Tarea")
+    id = input("Elige el ID de la tarea a eliminar: ")
+    tareas = session.query(Tareas_sem).all()
+    existe_tarea = 0
+    tarea = ""
+    for tar in tareas:
+        if tar.id == int(id):
+            tarea = tar
+            existe_tarea = 1
+            break
+    while existe_tarea == 0:
+        print("¡EL ID de la terea no existe!")
+        id = input("Elige el ID de la tarea a eliminar: ")
+        for tar in tareas:
+            if tar.id == int(id):
+                tarea = tar
+                existe_tarea = 1
+                break
+    
+    confirmar =  input("Seguro de eliminar tarea:"+tarea.Nombre_tarea+"(SI - s, NO - n) : ")
+    while confirmar is not "s" and confirmar is not "n":
+        print("Selecciona una opción valida")
+        print("Escribre s para SI y n para NO")
+        confirmar =  input("Seguro de eliminar tarea:"+tarea.Nombre_tarea+"(SI - s, NO - n) : ")
+    # tarea = session.query(Tareas_sem).filter(Tareas_sem.id == id).one()
+    my_cron = CronTab(user='pi')
+    job = my_cron.find_comment('semanal_'+str(tarea.id))
+    my_cron.remove(job)
+    my_cron.write()
+    session.delete(tarea)
+    session.commit()
+
+def add_tareas_ind():
+    print("\n")
+    print("Crear nueva tarea independiente")
+    pin = input("Elige el PIN del relevador: ")
+    reles = session.query(Relevadores).all()
+    ban = 1
+    existe_rele = 0
+    for rele in reles:
+        if rele.Pin == str(pin):
+            existe_rele = 1
+            break
+
+    while existe_rele == 0:
+        print("¡El PIN del relevador no existe!")
+        pin = input("Elige el PIN del relevador: ")
+        for rele in reles:
+            if rele.Pin == str(pin):
+                existe_rele = 1
+                break
+    nombre_tarea = input("Elige el nombre de la tarea: ")
+
+    print("Define la fecha de programación")
+    fecha = input("Digita la fecha en formato dd/mm/yyyy : ")
+    
+    while isDateFormat(fecha) is False:
+        print("Digita una fecha valida")
+        fecha = input("Digita la fecha en formato dd/mm/yyyy : ")
+    fecha_prog = str(fecha).split("/")
+    fecha = fecha_prog[2]+"-"+fecha_prog[1]+"-"+fecha_prog[0]
+
+    print("Define la hora de programación")
+    hora_prog = input("Digita la hora en formato 24Hrs (00 a 23 Hrs y 00 a 59 Min): ")
+    
+    while isTimeFormat(hora_prog) is False:
+        print("Digita una hora valida")
+        hora_prog = input("Digita la hora en formato 24Hrs (00:00 - 23:59 Hrs): ")
+    
+    hora_prog = str(hora_prog).split(":")
+    hora= hora_prog[0] if int(hora_prog[0]) > 9 else "0"+str(int(hora_prog[0]))
+    minuto = hora_prog[1] if int(hora_prog[1]) > 9 else "0"+str(int(hora_prog[1]))
+
+    print("Selecciona la accion de la tarea")
+    estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+    while estatus is not "0" and estatus is not "1":
+         print("Selecciona una opción valida")
+         estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+
+    print("Selecciona la logica a emplear")
+    logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    while logica is not "0" and logica is not "1":
+         print("Selecciona una opción valida")
+         logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    
+    print(pin, nombre_tarea, fecha, hora+":"+minuto, hora, minuto, estatus, logica)
+    
+    agregar_tarea_ind(nombre_tarea, hora, minuto, fecha, pin, estatus, logica, fecha_prog[0], fecha_prog[1])
+
+#agregar tarea independiente en la bd
+def agregar_tarea_ind(nombre, hora, minuto, fecha, pin, estatus, logica, dia, mes):
+    rele = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
+    tabla = 'tareas_ind'
+    columnas = ("Nombre_tarea", "Fecha", "Hora", "Nombre", "Pin", "Estatus", "Logica_rele" )
+    valores = (str(nombre), str(fecha), str(hora+":"+minuto), str(rele.Nombre), str(pin), int(estatus), int(logica))
+    session.execute(f"INSERT INTO {tabla} {columnas} VALUES {valores}")
+    session.commit()
+
+    tarea = session.query(Tareas_ind).filter(Tareas_ind.Nombre_tarea == str(nombre)).one()
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='independiente_'+str(tarea.id)) #pin, estatus, logica
+    # tiempo = str(hora).split(":")
+    cron_hora = hora
+    cron_min = minuto
+
+    job.setall(str(cron_min)+' '+str(cron_hora)+' '+str(dia)+' '+str(mes)+' *')
+    cron.write()
+
+#editar tareas independientes
+def editar_tareas_ind():
+    print("\n")
+    print("Editar Tarea Independiente")
+    id = input("Elige el ID de la tarea a editar: ")
+    tareas = session.query(Tareas_ind).all()
+    existe_tarea = 0
+    for tarea in tareas:
+        if tarea.id == int(id):
+            existe_tarea = 1
+            break
+    while existe_tarea == 0:
+        print("¡EL ID de la terea no existe!")
+        id = input("Elige el ID de la tarea a editar: ")
+        for tarea in tareas:
+            if tarea.id == int(id):
+                existe_tarea = 1
+                break
+    print("\n")
+    consultaRelay()
+    print("\n")
+    print("Tarea seleccionada:")
+    print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre_tarea, ", Pin: ", tarea.Pin, ", Fecha: ", tarea.Fecha, "Hora: ", tarea.Hora, ", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
+
+    print("\n")
+    pin = input("Elige el PIN del relevador: ")
+    reles = session.query(Relevadores).all()
+    existe_rele = 0
+    for rele in reles:
+        if rele.Pin == str(pin):
+            existe_rele = 1
+            break
+
+    while existe_rele == 0:
+        print("¡El PIN del relevador no existe!")
+        pin = input("Elige el PIN del relevador: ")
+        for rele in reles:
+            if rele.Pin == str(pin):
+                existe_rele = 1
+                break
+    nombre_tarea = input("Elige el nombre de la tarea: ")
+    print("Define la fecha de programación")
+    fecha = input("Digita la fecha en formato dd/mm/yyyy : ")
+    
+    while isDateFormat(fecha) is False:
+        print("Digita una fecha valida")
+        fecha = input("Digita la fecha en formato dd/mm/yyyy : ")
+    fecha_prog = str(fecha).split("/")
+    fecha = fecha_prog[2]+"-"+fecha_prog[1]+"-"+fecha_prog[0]
+
+    print("Define la hora de programación")
+    hora_prog = input("Digita la hora en formato 24Hrs (00 a 23 Hrs y 00 a 59 Min): ")
+    
+    while isTimeFormat(hora_prog) is False:
+        print("Digita una hora valida")
+        hora_prog = input("Digita la hora en formato 24Hrs (00:00 - 23:59 Hrs): ")
+    
+    hora_prog = str(hora_prog).split(":")
+    hora= hora_prog[0] if int(hora_prog[0]) > 9 else "0"+str(int(hora_prog[0]))
+    minuto = hora_prog[1] if int(hora_prog[1]) > 9 else "0"+str(int(hora_prog[1]))
+
+    print("Selecciona la accion de la tarea")
+    estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+    while estatus is not "0" and estatus is not "1":
+         print("Selecciona una opción valida")
+         estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+
+    print("Selecciona la logica a emplear")
+    logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    while logica is not "0" and logica is not "1":
+         print("Selecciona una opción valida")
+         logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    
+    print(pin, nombre_tarea, fecha, hora+":"+minuto, hora, minuto, estatus, logica)
+    
+    editar_tarea_independiente(id, nombre_tarea, hora, minuto, fecha, pin, estatus, logica, fecha_prog[0], fecha_prog[1])
+
+#agregar cambios a la bd y borrar tarea cron independiente
+def editar_tarea_independiente(id, nombre, hora, minuto, fecha, pin, estatus, logica, dia, mes):
+    rele = session.query(Relevadores).filter(Relevadores.Pin == pin).one()
+    tarea = session.query(Tareas_ind).filter(Tareas_ind.id == id).one()
+    tarea.Nombre_tarea = str(nombre)
+    # tarea.Fecha = ''
+    tarea.Fecha = str(fecha)
+    tarea.Hora = str(hora+":"+minuto)
+    tarea.Nombre = str(rele.Nombre)
+    tarea.Pin = str(pin)
+    tarea.Estatus = int(estatus)
+    tarea.Logica_rele = int(logica)
+    session.commit()
+
+    my_cron = CronTab(user='pi')
+    job_ant = my_cron.find_comment('independiente_'+str(id))
+    my_cron.remove(job_ant)
+    my_cron.write()
+
+    cron = CronTab(user='pi')
+    job = cron.new(command='/home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/cron_run.py '+str(pin)+' '+str(estatus)+' '+str(logica), comment='independiente_'+str(tarea.id)) #pin, estatus, logica
+    # tiempo = str(hora).split(":")
+    cron_hora = hora
+    cron_min = minuto
+
+    job.setall(str(cron_min)+' '+str(cron_hora)+' '+str(dia)+' '+str(mes)+' *')
+    cron.write()
+
+#borrar tarea independiente
+def borrar_tarea_ind():
+    print("\n")
+    print("Borrar Tarea independiente")
+    id = input("Elige el ID de la tarea a eliminar: ")
+    tareas = session.query(Tareas_ind).all()
+    existe_tarea = 0
+    tarea = ""
+    for tar in tareas:
+        if tar.id == int(id):
+            tarea = tar
+            existe_tarea = 1
+            break
+    while existe_tarea == 0:
+        print("¡EL ID de la terea no existe!")
+        id = input("Elige el ID de la tarea a eliminar: ")
+        for tar in tareas:
+            if tar.id == int(id):
+                tarea = tar
+                existe_tarea = 1
+                break
+    
+    confirmar =  input("Seguro de eliminar tarea:"+tarea.Nombre_tarea+"(SI - s, NO - n) : ")
+    while confirmar is not "s" and confirmar is not "n":
+        print("Selecciona una opción valida")
+        print("Escribre s para SI y n para NO")
+        confirmar =  input("Seguro de eliminar tarea:"+tarea.Nombre_tarea+"(SI - s, NO - n) : ")
+
+    # tarea = session.query(Tareas_ind).filter(Tareas_ind.id == id).one()
+    my_cron = CronTab(user='pi')
+    job = my_cron.find_comment('independiente_'+str(tarea.id))
+    my_cron.remove(job)
+    my_cron.write()
+    session.delete(tarea)
+    session.commit()
+    
+def crear_tablas():
+    tareas_sem = Table( 'tareas_sem', metadata,
+                       Column( 'id', Integer, primary_key = True ),
+                       Column( 'Nombre_tarea', String(500) ),
+                       Column( 'Dias', String(50) ),
+                       Column( 'Hora', String(50) ),
+                       Column( 'Nombre', String(500) ),
+                       Column( 'Pin', String(10) ),
+                       Column( 'Estatus', Boolean),
+                       Column( 'Logica_rele', Boolean))
+    
+    tareas_ind = Table( 'tareas_ind', metadata,
+                       Column( 'id', Integer, primary_key = True ),
+                       Column( 'Nombre_tarea', String(500) ),
+                       Column( 'Fecha', String(50) ),
+                       Column( 'Hora', String(50) ),
+                       Column( 'Nombre', String(500) ),
+                       Column( 'Pin', String(10) ),
+                       Column( 'Estatus', Boolean),
+                       Column( 'Logica_rele', Boolean))
+    tareas_sem.create(engine)
+    tareas_ind.create(engine)
+    
 #bucle principal
 os.system("clear")
 
@@ -441,12 +863,13 @@ if __name__ == "__main__":
         print(" 2 - Cambiar estado de un relevador ")
         print(" 3 - Cambiar nombre de un relevador ")
         print(" 4 - Tareas programadas semanales ")
-        print(" 5 - Tareas programadas independientes")
+        print(" 5 - Tareas programadas independientes ")
         print(" 6 - Cambiar IP estatica WLAN del dispositivo ")
         print(" 7 - Cambiar IP estatica ETHERNET del dispositivo ")
-        print(" 8 - Cambiar PUERTO de conexion del portal ")
+        print(" 8 - Cambiar PUERTO de conexion al portal ")
         print(" 9 - Ingresar IP y PUERTO en la Base de datos del dispotivo ")
-        print(" 10 - Salir ")
+        print(" 10 - Crear TABLAS para TAREAS PROGRAMADAS")
+        print(" 11 - Salir ")
         print("\n")
         dato = input(" Selecciona una opcion: ")
         comando = int(dato)
@@ -481,7 +904,6 @@ if __name__ == "__main__":
                 print("5 - Regresar al menu anterior")
                 print("\n")
                 opcion = int(input(" Selecciona una opcion: "))
-                os.system("clear")
                 if opcion == 1:
                     os.system("clear")
                     consulta_tareas_sem()
@@ -489,6 +911,14 @@ if __name__ == "__main__":
                     os.system("clear")
                     consultaRelay()
                     add_tareas_sem()
+                if opcion == 3:
+                    os.system("clear")
+                    consulta_tareas_sem()
+                    editar_tareas_sem()
+                if opcion == 4:
+                    os.system("clear")
+                    consulta_tareas_sem()
+                    borrar_tareas_sem()
                 elif opcion == 5:
                     break
         elif comando == 5:
@@ -500,9 +930,21 @@ if __name__ == "__main__":
                 print("5 - Regresar al menu anterior")
                 print("\n")
                 opcion = int(input(" Selecciona una opcion: "))
-                os.system("clear")
                 if opcion == 1:
+                    os.system("clear")
                     consulta_tareas_ind()
+                if opcion == 2:
+                    os.system("clear")
+                    consultaRelay()
+                    add_tareas_ind()
+                if opcion == 3:
+                    os.system("clear")
+                    consulta_tareas_ind()
+                    editar_tareas_ind()
+                if opcion == 4:
+                    os.system("clear")
+                    consulta_tareas_ind()
+                    borrar_tarea_ind()
                 elif opcion == 5:
                     break
         
@@ -582,8 +1024,12 @@ if __name__ == "__main__":
             except:
                 print('Usage : %s ip' % sys.argv[0])
             ban = 0
-        
+            
         elif comando == 10:
+            crear_tablas()
+            # session.create_all()
+            print("tablas creadas")
+        elif comando == 11:
             os.system('nohup /home/pi/listenpi/listenpienv/bin/python3 /home/pi/listenpi/listenpi/menu_4.py &')
             sys.exit()
         else:
