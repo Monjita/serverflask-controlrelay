@@ -201,8 +201,35 @@ def consulta():
     print("\n")
 
 #cambio de estado relay
-def change_relay(logica, pin, estatus):
+# def change_relay(logica, pin, estatus):
+def change_relay():
     #os.system('gpio -g mode '+str(pin)+' output')
+    pin = input("Elige el PIN del relevador: ")
+    reles = session.query(Relevadores).all()
+    existe_rele = 0
+    for rele in reles:
+        if rele.Pin == str(pin):
+            existe_rele = 1
+            break
+
+    while existe_rele == 0:
+        print("¡El PIN del relevador no existe!")
+        pin = input("Elige el PIN del relevador: ")
+        for rele in reles:
+            if rele.Pin == str(pin):
+                existe_rele = 1
+                break
+            
+    estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+    while estatus is not "0" and estatus is not "1":
+         print("Selecciona una opción valida")
+         estatus = input("Digita 0 para OFF - Digita 1 para ON: ")
+            
+    logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    while logica is not "0" and logica is not "1":
+         print("Selecciona una opción valida")
+         logica = input("Digita 0 para Logica normal - Digita 1 para Logica inversa: ")
+    
     drasp = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
     if drasp:
         if estatus == '1': #relay ON
@@ -221,11 +248,13 @@ def change_relay(logica, pin, estatus):
                 os.system('gpio -g write '+str(pin)+' 1')
         session.commit()
         #os.system("clear")
-        print(logica, pin, estatus)
-        return "Cambio de estado exitoso"
+        # print(logica, pin, estatus)
+        print("Cambio de estado exitoso")
+        print("\n")
     else:
         os.system("clear")
-        return "Error"
+        print("Error")
+        print("\n")
 
 #funcion de inicio y/o reinicio forzado
 def inicio():
@@ -238,17 +267,35 @@ def inicio():
             os.system('gpio -g write '+str(row.Pin)+' 0')
             
 #cambio de nombre al pin
-def rename(pin, name):
+def rename():
+    pin = input("Elige el PIN del relevador: ")
+    reles = session.query(Relevadores).all()
+    existe_rele = 0
+    for rele in reles:
+        if rele.Pin == str(pin):
+            existe_rele = 1
+            break
+
+    while existe_rele == 0:
+        print("¡El PIN del relevador no existe!")
+        pin = input("Elige el PIN del relevador: ")
+        for rele in reles:
+            if rele.Pin == str(pin):
+                existe_rele = 1
+                break
     raspberry = session.query(Relevadores).filter(Relevadores.Pin == str(pin)).one()
+    print("Relevador seleccionado")
+    print("Nombre: ",  raspberry.Nombre, "Pin: ", raspberry.Pin, "Estado : ", raspberry.Estatus, "Logica: ", "normal" if raspberry.Logica == 0 else "invera" )
+    nombre = input("Escriba el nuevo nombre del pin: ")
     if raspberry:
-        raspberry.Nombre = name
+        raspberry.Nombre = nombre
         session.commit()
         os.system("clear")
-        print("Cambio de nombre exitoso")
+        print("CAMBIO DE NOMBRE EXITOSO")
         print("\n")
     else:
         print("\n")
-        print("Error")
+        print("ERROR")
 
 
 #cambio de nombre y/o pin
@@ -298,6 +345,7 @@ def consulta_tareas_sem():
     print("ID   -   Tarea   -   Nombre Pin     -   Pin    -    Dias    -    Hora    -   Acción     -    Lógica")
     print("\n")
     dias_sem = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S']
+    index = 0
     for tarea in tareas:
         dias = tarea.Dias
         dias = str(dias).split(',')
@@ -308,6 +356,9 @@ def consulta_tareas_sem():
                 str_dias = str_dias+str(dias_sem[i])+", "
             i=i+1
         print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre_tarea, ", Pin: ", tarea.Pin, ", Dias: ", str_dias, "Hora: ", tarea.Hora, ", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
+        index = index + 1
+    if index < 1: 
+        print("No existen tareas semanales creadas") 
     print("\n")
     
 #consulta tareas independientes
@@ -317,9 +368,13 @@ def consulta_tareas_ind():
     print("\n")
     print("ID   -   Tarea   -   Nombre Pin  -   Pin    -   Fecha    -   Hora    -   Acción  -   Lógica")
     print("\n")
+    index = 0
     for tarea in tareas:
         fecha = str(tarea.Fecha).split('-')
         print("ID: ", tarea.id, ", Tarea: ", tarea.Nombre, ", Nombre Pin: ", tarea.Nombre_tarea, ", Fecha: ", fecha[2]+"/"+fecha[1]+"/"+fecha[0], ", Hora: ", tarea.Hora, "Pin: ", tarea.Pin,", Accion: ", "ON" if tarea.Estatus == 1 else "OFF", ", Logica: ", "Normal" if tarea.Logica_rele == 0 else "Inversa")
+        index = index + 1
+    if index < 1: 
+        print("No existen tareas independientes creadas")   
     print("\n")
 
 #agregar tarea semanal en la bd
@@ -437,10 +492,12 @@ def agregar_tarea_sem(nombre, hora, minuto, dias, pin, estatus, logica):
 
     job.setall(str(cron_min)+' '+str(cron_hora)+' * * '+str(str_dias))
     cron.write()
+    os.system("clear")
+    print("Tarea semanal creada con exito")
+    print("\n")
 
 #editar tareas semanales
 def editar_tareas_sem():
-    print("\n")
     print("Editar Tarea")
     id = input("Elige el ID de la tarea a editar: ")
     tareas = session.query(Tareas_sem).all()
@@ -881,22 +938,19 @@ if __name__ == "__main__":
         elif comando == 2:
             consultaRelay()
             print("\n")
-            pin = input("Escriba el pin que desea cambiar el estado: ")
-            logica = input("Digite 0 para logica normal, 1 para logica inversa: ")
-            estado = input("Digete 0 para apagar, 1 para encender: ")
-            respuesta = change_relay(logica,pin, estado)
-            print(respuesta)
-            print("\n")
+            change_relay()
             ban = 0
         elif comando == 3:
             consultaRelay()
             print("\n")
-            pin = input("Escriba el pin al que desea cambiar el nombre: ")
-            nombre = input("Escriba el nuevo nombre del pin: ")
-            rename(pin, nombre)
+            # pin = input("Escriba el pin al que desea cambiar el nombre: ")
+            # nombre = input("Escriba el nuevo nombre del pin: ")
+            rename()
             ban = 0
         elif comando == 4:
+            os.system("clear")
             while True:
+                print("Lista de opciones TAREAS SEMANALES")
                 print("1 - Listado de tareas")
                 print("2 - Crear nueva tarea")
                 print("3 - Editar una tarea")
